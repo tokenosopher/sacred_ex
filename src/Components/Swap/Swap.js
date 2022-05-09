@@ -1,8 +1,11 @@
 import React from 'react';
 import styled from 'styled-components'
 import {BsGear} from 'react-icons/bs'
+import {useWeb3React} from "@web3-react/core";
 
 const Swap = () => {
+
+    const { active, account } = useWeb3React();
 
     return (
         <Container>
@@ -23,6 +26,8 @@ const Swap = () => {
                 </InputWrapper>
             </SwapColumnTwo>
             <ButtonOption>Connect Wallet</ButtonOption>
+            <div>Connection Status:  {active.toString()}</div>
+            <div>Account: {account}</div>
 
         </Container>
     )
