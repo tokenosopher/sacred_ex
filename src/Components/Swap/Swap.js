@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components'
 import {BsGear} from 'react-icons/bs'
+import {IoMdArrowDropdown} from 'react-icons/io'
 import {useWeb3React} from "@web3-react/core";
 
 const Swap = (props) => {
@@ -10,7 +11,6 @@ const Swap = (props) => {
     const { active} = useWeb3React();
 
     const buttonFunction = () => {
-        // active ? (null) : (setConnectModal(true))
         if (active) {
             return
         }
@@ -30,6 +30,10 @@ const Swap = (props) => {
             <SwapColumnOne>
                 <InputWrapper>
                     <InputFieldOne type="number" placeholder="0.0"/>
+                    <SwapOneButtonWrapper>
+                    <p>Button</p>
+                        <DropDown/>
+                    </SwapOneButtonWrapper>
                 </InputWrapper>
             </SwapColumnOne>
             <SwapColumnTwo>
@@ -80,6 +84,7 @@ const InputWrapper = styled.div`
   display:flex;
   justify-content: space-between;
   margin: 0 10px;
+  position: relative;
 `
 
 const InputFieldOne = styled.input`
@@ -108,6 +113,37 @@ const InputFieldOne = styled.input`
   &:hover {
     border: 1px solid #737373;
   }
+`
+const SwapOneButtonWrapper = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 25px;
+  border-radius: 20px;
+  width: 100px;
+  height: 40px;
+  background-color: #0f1113;
+  color: #ffffff;
+  border: 1px grey solid;
+  font-weight: bold;
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+  cursor: pointer;
+  transition: border 0.2s ease-in-out;
+  
+  
+  p {
+    margin-left: 10px;
+  }
+  &:hover {
+    border: 1px white solid;
+  }
+`
+
+const DropDown = styled(IoMdArrowDropdown)`
+    position: relative;
+    //align to the right of the button:
+    
 `
 
 const InputFieldTwo = styled(InputFieldOne)``
