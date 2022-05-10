@@ -3,9 +3,21 @@ import styled from 'styled-components'
 import {BsGear} from 'react-icons/bs'
 import {useWeb3React} from "@web3-react/core";
 
-const Swap = () => {
+const Swap = (props) => {
 
-    const { active, account } = useWeb3React();
+    const [connectModal, setConnectModal] = props.functions
+
+    const { active} = useWeb3React();
+
+    const buttonFunction = () => {
+        // active ? (null) : (setConnectModal(true))
+        if (active) {
+            return
+        }
+        else {
+            setConnectModal(true)
+        }
+    }
 
     return (
         <Container>
@@ -25,9 +37,9 @@ const Swap = () => {
                     <InputFieldTwo type="number" placeholder="0.0"/>
                 </InputWrapper>
             </SwapColumnTwo>
-            <ButtonOption>Connect Wallet</ButtonOption>
-            <div>Connection Status:  {active.toString()}</div>
-            <div>Account: {account}</div>
+            <ButtonOption onClick={() => buttonFunction()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
+            {/*<div>Connection Status:  {active.toString()}</div>*/}
+            {/*<div>Account: {account}</div>*/}
 
         </Container>
     )
