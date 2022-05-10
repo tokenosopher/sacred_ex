@@ -12,16 +12,6 @@ const ConnectModal = (props) => {
 
     const { activate } = useWeb3React();
 
-    const setProvider = (type) => {
-        window.localStorage.setItem("provider", type);
-    };
-
-    const SelectProvider = (provider) => {
-        // activate(provider)
-        let key = Object.keys(connectors).find(k=>connectors[provider]===value);
-        console.log(key)
-    }
-
     return (
         connectModal &&
             <ModalContainer>
@@ -31,15 +21,24 @@ const ConnectModal = (props) => {
                     <AiOutlineCloseBtn onClick={() => {setConnectModal(false)}}/>
                     </TitleWrapper>
                     <WalletButtonsWrapper>
-                    <WalletButton onClick={() => { activate(connectors.coinbaseWallet)}}>
+                    <WalletButton onClick={() => {
+                        activate(connectors.coinbaseWallet);
+                        setConnectModal(false)
+                    }}>
                         <WalletIcon src={coinbase_icon} alt="coinbase_icon"/>
                         <WalletText> Coinbase Wallet</WalletText>
                     </WalletButton>
-                    <WalletButton onClick={() => { activate(connectors.walletConnect)}}>
+                    <WalletButton onClick={() => {
+                        activate(connectors.walletConnect)
+                        setConnectModal(false)
+                    }}>
                         <WalletIcon src={walletconnect_icon} alt="walletconnect_icon"/>
                         <WalletText> WalletConnect</WalletText>
                     </WalletButton>
-                    <WalletButton onClick={() => {activate(connectors.injected) }}>
+                    <WalletButton onClick={() => {
+                        activate(connectors.injected)
+                        setConnectModal(false)
+                    }}>
                         <WalletIcon src={metamask_icon} alt="metamask_icon"/>
                         <WalletText> MetaMask</WalletText>
                     </WalletButton>

@@ -2,14 +2,24 @@ import React from 'react';
 import styled from 'styled-components';
 import sacred_logo from '../../assets/images/sacred_logo.png'
 import {useWeb3React} from "@web3-react/core";
-import ConnectModal from "../ConnectModal/ConnectModal";
+import ConnectModal from "../Modals/ConnectModal";
 import {truncateAddress} from "../../constants/utils";
 
 const Header = (props) => {
 
     const [connectModal, setConnectModal] = props.functions;
 
-    const { activate, deactivate, active, account, chainId, library } = useWeb3React();
+    const { active, account, library } = useWeb3React();
+
+
+    const onClickConnectWalletButton = () => {
+        if (active) {
+            return
+        }
+        else {
+            setConnectModal(true)
+        }
+    }
 
 
     //
@@ -39,15 +49,8 @@ const Header = (props) => {
             </MidMenu>
             <RightMenu>
                 <PolygonButton> Polygon</PolygonButton>
-                <ConnectWalletButton onClick={() => setConnectModal(true) }> {active ? setAddressValue() : 'Connect Wallet'}  </ConnectWalletButton>
+                <ConnectWalletButton onClick={() => onClickConnectWalletButton() }> {active ? setAddressValue() : 'Connect Wallet'}  </ConnectWalletButton>
                 <ThreeDotsButton>...</ThreeDotsButton>
-
-                {/*<li>*/}
-                {/*    <a> Polygon </a>*/}
-                {/*    <a> Connect Wallet</a>*/}
-                {/*    <a>...</a>*/}
-                {/*</li>*/}
-
             </RightMenu>
         </Nav>
     </>

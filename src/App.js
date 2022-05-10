@@ -14,18 +14,16 @@ import Swap from "./Components/Swap/Swap";
 import Footer from "./Components/Footer/Footer";
 import Guidelines from "./Components/Guidelines/Guidelines";
 import GratitudeMessage from "./Components/Messages/GratitudeMessage";
-import ConnectModal from "./Components/ConnectModal/ConnectModal";
+import ConnectModal from "./Components/Modals/ConnectModal";
+import SelectCoinModal from "./Components/Modals/SelectCoinModal";
 
 function App() {
-
-    useEffect(() => {
-        const provider = window.localStorage.getItem("provider");
-        if (provider) activate(connectors[provider]);
-    }, []);
 
     const { activate, deactivate, active, account, chainId, library } = useWeb3React();
 
     const [connectModal, setConnectModal] = useState(false);
+
+    const [coinModal, setCoinModal] = useState(true);
 
     //
     const callLibrary = async() => {
@@ -36,38 +34,12 @@ function App() {
             const amount = await library.getBalance(account)
             console.log(amount.toString())
         }
-
-        // console.log("await library.getSigner()")
     }
-
-    //
-    // const [network, setNetwork] = useState(undefined);
-    // const [verified, setVerified] = useState();
-    //
-    // const refreshState = () => {
-    //     window.localStorage.setItem("provider", undefined);
-    //     setNetwork("");
-    //     setVerified(undefined);
-    // };
-    //
-    // const disconnect = () => {
-    //     refreshState();
-    //     deactivate();
-    // };
 
   return (
       <>
-    {/*      <button onClick={() => { activate(connectors.coinbaseWallet)}}>Coinbase Wallet</button>*/}
-    {/*<button onClick={() => { activate(connectors.walletConnect)}}>Wallet Connect</button>*/}
-    {/*<button onClick={async () => { await activate(connectors.injected) }}>Metamask</button>*/}
-    {/*<button onClick={async () => { await callLibrary()}}>Frame</button>*/}
-
-    {/*<button onClick={() => {deactivate()}}>Disconnect</button>*/}
-    {/*    <div>Connection Status:  {active.toString()}</div>*/}
-    {/*    <div>Account: {account}</div>*/}
-    {/*      <div>{chainId}</div>*/}
-
       <ConnectModal functions={[connectModal, setConnectModal]}/>
+      <SelectCoinModal functions={[coinModal, setCoinModal]}/>
       <Main className="App">
         <Header functions={[connectModal, setConnectModal]}/>
         <Guidelines/>
