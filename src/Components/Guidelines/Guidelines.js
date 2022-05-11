@@ -6,25 +6,26 @@ import { useEffect, useState} from "react";
 
 //all of the writing for this component is found in the tokenListSlice.js file
 
-const Guidelines = () => {
+const Guidelines = (props) => {
+
+    const [activeTokenAttributes]= props.functions
 
     //this holds all of the information about the active token, after being filtered by the useEffect
-    const [activeTokenAttributes, setActiveTokenAttributes] = useState();
 
-    //this gets the token list from the redux store:
-    const tokenList = useSelector((state) => state.tokenList)
-
-    //this retrieves the active token from the redux store:
-    const activeToken = useSelector((state) => state.token)
-
-    //use effect that updates the active token attributes whenever the active token changes:
-    useEffect(() => {
-        const newActiveToken = tokenList.value.filter((token) => {
-            return token.symbol === activeToken.value
-        })
-        setActiveTokenAttributes(newActiveToken[0])
-        console.log(newActiveToken[0])
-    }, [activeToken])
+    // //this gets the token list from the redux store:
+    // const tokenList = useSelector((state) => state.tokenList)
+    //
+    // //this retrieves the active token from the redux store:
+    // const activeToken = useSelector((state) => state.token)
+    //
+    // //use effect that updates the active token attributes whenever the active token changes:
+    // useEffect(() => {
+    //     const newActiveToken = tokenList.value.filter((token) => {
+    //         return token.symbol === activeToken.value
+    //     })
+    //     setActiveTokenAttributes(newActiveToken[0])
+    //     console.log(newActiveToken[0])
+    // }, [activeToken])
 
 
     return (
@@ -59,7 +60,7 @@ const Container = styled.div`
 const GuidelineTitle = styled.div`
   margin: 10px;
 
-  h1 {
+  h2 {
     align-items: center;
     //center vertically:
     display: flex;
@@ -74,6 +75,7 @@ const GuidelineTitle = styled.div`
   p {
     //increase the spacing between letters:
     letter-spacing: 0.5px;
+    margin-left: 5px;
   }
 
 `;
