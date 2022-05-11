@@ -1,22 +1,43 @@
 import React from 'react';
 import styled from 'styled-components';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
+import { useSelector} from "react-redux";
+import { useEffect, useState} from "react";
+
+//all of the writing for this component is found in the tokenListSlice.js file
 
 const Guidelines = () => {
+
+    //this holds all of the information about the active token, after being filtered by the useEffect
+    const [activeTokenAttributes, setActiveTokenAttributes] = useState();
+
+    //this gets the token list from the redux store:
+    const tokenList = useSelector((state) => state.tokenList)
+
+    //this retrieves the active token from the redux store:
+    const activeToken = useSelector((state) => state.token)
+
+    //use effect that updates the active token attributes whenever the active token changes:
+    useEffect(() => {
+        const newActiveToken = tokenList.value.filter((token) => {
+            return token.symbol === activeToken.value
+        })
+        setActiveTokenAttributes(newActiveToken[0])
+        console.log(newActiveToken[0])
+    }, [activeToken])
+
 
     return (
         <Container>
             <GuidelineTitle>
                 <TitleWrapper>
-                    <h1>Sacred Coin Guideline</h1>
+                    <h2>{activeTokenAttributes && activeTokenAttributes.guidelineTitle}</h2>
                     <QuestionMarkWrapper>
                         <AiOutlineQuestionCircle size={20}/>
                     </QuestionMarkWrapper>
                 </TitleWrapper>
-                {/*<h3>Guideline 1</h3>*/}
-                <p> Every time you buy, sell or otherwise use the coin, take a second to think of something that you are grateful for. It could be your family, your friends, the neighborhood you are living in or your pet tortoise. Ideally, you should think about something different that you're grateful for every time you use the coin.</p>
+                <p> {activeTokenAttributes && activeTokenAttributes.guidelines}</p>
             </GuidelineTitle>
-
         </Container>
     )
 }

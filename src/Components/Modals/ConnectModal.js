@@ -89,12 +89,12 @@ export const AiOutlineCloseBtn = styled(AiOutlineClose)`
   top: 10px;
   cursor: pointer;
   transition: all 0.3s;
-  
+
   &:hover {
     border-radius: 50px;
-    box-shadow: 0px 0px 10px #fff;
+    box-shadow: 0 0 10px #fff;
   }
-  
+
 `
 
 export const WalletButtonsWrapper = styled.div`

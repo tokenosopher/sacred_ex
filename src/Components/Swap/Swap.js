@@ -6,7 +6,7 @@ import {useWeb3React} from "@web3-react/core";
 
 const Swap = (props) => {
 
-    const [connectModal, setConnectModal] = props.functions
+    const [setConnectModal, setCoinModal] = props.functions
 
     const { active} = useWeb3React();
 
@@ -30,7 +30,7 @@ const Swap = (props) => {
             <SwapColumnOne>
                 <InputWrapper>
                     <InputFieldOne type="number" placeholder="0.0"/>
-                    <SwapOneButtonWrapper>
+                    <SwapOneButtonWrapper onClick = {() => setCoinModal(true)}>
                     <p>Button</p>
                         <DropDown/>
                     </SwapOneButtonWrapper>
@@ -42,8 +42,6 @@ const Swap = (props) => {
                 </InputWrapper>
             </SwapColumnTwo>
             <ButtonOption onClick={() => buttonFunction()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
-            {/*<div>Connection Status:  {active.toString()}</div>*/}
-            {/*<div>Account: {account}</div>*/}
 
         </Container>
     )

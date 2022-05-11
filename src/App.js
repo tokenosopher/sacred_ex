@@ -3,9 +3,6 @@ import {useState, useEffect} from "react";
 import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core'
 
-
-
-import './App.css';
 import { connectors } from "./constants/connectors"
 import Header from "./Components/Header/Header";
 import Swap from "./Components/Swap/Swap";
@@ -43,7 +40,7 @@ function App() {
       <Main className="App">
         <Header functions={[connectModal, setConnectModal]}/>
         <Guidelines/>
-        <Swap functions={[connectModal, setConnectModal]}/>
+        <Swap functions={[setConnectModal, setCoinModal]}/>
         <GratitudeMessage/>
         <Footer/>
       </Main>

@@ -3,29 +3,16 @@ import {ModalContainer, ModalBox, TitleWrapper, ModalTitle, AiOutlineCloseBtn} f
 import styled from "styled-components";
 import polygon_token from "../../assets/token_icons/polygon_token.png"
 import gratitude_coin from "../../assets/token_icons/gratitude_coin.png"
+import {useSelector} from "react-redux";
 
 import {setToken} from "../../features/tokens/tokenSlice";
 import {useDispatch} from "react-redux";
 
 const SelectCoinModal = (props) => {
 
+    const coinList = useSelector((state) => state.tokenList)
+
     const dispatch = useDispatch();
-
-    const coinList = [
-        {
-            id: "1",
-            name: "Polygon Matic",
-            symbol: "MATIC",
-            icon: polygon_token
-        },
-
-        {
-            id: "2",
-            name: "Gratitude Coin",
-            symbol: "GRTFUL",
-            icon: gratitude_coin
-        }
-    ]
 
     const [coinModal, setCoinModal] = props.functions
 
@@ -44,7 +31,7 @@ const SelectCoinModal = (props) => {
                 </TitleWrapper>
                 <Line />
                 <CoinsWrapper>
-                    {coinList && coinList.map((coin) => (
+                    {coinList && coinList.value.map((coin) => (
                         <CoinWrapper onClick={() => {handleClick(coin)}} key={coin.id}>
                         <CoinIcon src={coin.icon}/>
                         <CoinTextWrapper>
