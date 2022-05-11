@@ -1,9 +1,6 @@
 import React from 'react';
 import {useState, useEffect} from "react";
 import styled from 'styled-components';
-import { useWeb3React } from '@web3-react/core'
-
-import { connectors } from "./constants/connectors"
 import Header from "./Components/Header/Header";
 import Swap from "./Components/Swap/Swap";
 
@@ -14,31 +11,38 @@ import GratitudeMessage from "./Components/Messages/GratitudeMessage";
 import ConnectModal from "./Components/Modals/ConnectModal";
 import SelectCoinModal from "./Components/Modals/SelectCoinModal";
 import {useSelector} from "react-redux";
+import tokenOneSlice from "./features/tokens/tokenOneSlice";
 
 function App() {
-
-    const { activate, deactivate, active, account, chainId, library } = useWeb3React();
 
     const [activeTokenAttributes, setActiveTokenAttributes] = useState();
 
     const [connectModal, setConnectModal] = useState(false);
 
-    const [coinModal, setCoinModal] = useState(true);
+    const [coinModal, setCoinModal] = useState(false);
 
     //this gets the token list from the redux store:
     const tokenList = useSelector((state) => state.tokenList)
 
     //this retrieves the active token from the redux store:
-    const activeToken = useSelector((state) => state.token)
+    const tokenOne = useSelector((state) => state.tokenOne)
+
+    const tokenTwo = useSelector((state) => state.tokenTwo)
 
     //use effect that updates the active token attributes whenever the active token changes:
     useEffect(() => {
-        const newActiveToken = tokenList.value.filter((token) => {
-            return token.symbol === activeToken.value
-        })
-        setActiveTokenAttributes(newActiveToken[0])
-        console.log(newActiveToken[0])
-    }, [activeToken])
+        if (tokenOne.value.symbol !== 'MATIC') {
+            setActiveTokenAttributes(tokenOne.value)
+        }
+        else if (tokenTwo.value.symbol !== 'MATIC') {
+            setActiveTokenAttributes(tokenTwo.value)
+        }
+
+        else {
+            setActiveTokenAttributes(tokenList.value[1])
+        }
+
+    }, [tokenOne, tokenTwo])
 
     //
     // const callLibrary = async() => {

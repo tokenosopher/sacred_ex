@@ -3,10 +3,21 @@ import styled from 'styled-components'
 import {BsGear} from 'react-icons/bs'
 import {IoMdArrowDropdown} from 'react-icons/io'
 import {useWeb3React} from "@web3-react/core";
+import { useDispatch } from "react-redux";
+import {setSwapButton} from "../../features/swapModal/swapButton";
+import {useSelector} from "react-redux";
 
 const Swap = (props) => {
 
     const [setConnectModal, setCoinModal, activeTokenAttributes] = props.functions
+
+    const dispatch = useDispatch()
+
+
+    const tokenOne = useSelector((state) => state.tokenOne)
+    const tokenTwo = useSelector((state) => state.tokenTwo)
+
+
 
     const { active} = useWeb3React();
 
@@ -17,6 +28,15 @@ const Swap = (props) => {
         else {
             setConnectModal(true)
         }
+    }
+
+    const swapButton = (swapButtonNr) => {
+        setCoinModal(true)
+        dispatch(
+            setSwapButton(
+                swapButtonNr
+            )
+        )
     }
 
     return (
@@ -30,8 +50,8 @@ const Swap = (props) => {
             <SwapColumnOne>
                 <InputWrapper>
                     <InputFieldOne type="number" placeholder="0.0"/>
-                    <SwapOneButtonWrapper onClick = {() => setCoinModal(true)}>
-                    <p>{activeTokenAttributes && activeTokenAttributes.symbol}</p>
+                    <SwapOneButtonWrapper onClick = {() => swapButton(1) }>
+                    <p>{tokenOne && tokenOne.value.symbol}</p>
                         <DropDown/>
                     </SwapOneButtonWrapper>
                 </InputWrapper>
@@ -39,8 +59,8 @@ const Swap = (props) => {
             <SwapColumnTwo>
                 <InputWrapper>
                     <InputFieldTwo type="number" placeholder="0.0"/>
-                    <SwapTwoButtonWrapper>
-                        <p>Button</p>
+                    <SwapTwoButtonWrapper onClick = {() => swapButton(2)} >
+                        <p>{tokenTwo && tokenTwo.value.symbol}</p>
                         <DropDown/>
                     </SwapTwoButtonWrapper>
                 </InputWrapper>

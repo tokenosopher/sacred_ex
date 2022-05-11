@@ -1,14 +1,20 @@
 import React from 'react';
 import {ModalContainer, ModalBox, TitleWrapper, ModalTitle, AiOutlineCloseBtn} from "./ConnectModal";
 import styled from "styled-components";
-import polygon_token from "../../assets/token_icons/polygon_token.png"
-import gratitude_coin from "../../assets/token_icons/gratitude_coin.png"
 import {useSelector} from "react-redux";
 
-import {setToken} from "../../features/tokens/tokenSlice";
+import {setTokenOne} from "../../features/tokens/tokenOneSlice";
+import {setTokenTwo} from "../../features/tokens/tokenTwoSlice";
 import {useDispatch} from "react-redux";
+import {useState} from "react";
 
 const SelectCoinModal = (props) => {
+
+    const tokenOne = useSelector((state) => state.tokenOne)
+
+    const tokenTwo = useSelector((state) => state.tokenTwo)
+
+    const swapButton = useSelector((state) => state.swapButton)
 
     const coinList = useSelector((state) => state.tokenList)
 
@@ -16,10 +22,29 @@ const SelectCoinModal = (props) => {
 
     const [coinModal, setCoinModal] = props.functions
 
-    const handleClick = (coin) => {
-        dispatch(setToken(coin.symbol));
+    const handleClickOne = (coin) => {
+
+        const newActiveToken = coinList.value.filter((token) => {
+            return token.symbol === coin.symbol
+        })
+
+        if (swapButton.value === 1) {
+            dispatch(setTokenOne(newActiveToken[0]));
+        } else {
+            dispatch(setTokenTwo(newActiveToken[0]));
+        }
+
         setCoinModal(false);
     }
+
+        //
+        // }
+        // else {
+        //     dispatch(setTokenTwo(coin.symbol));
+        // }
+
+
+
 
     return (
         coinModal &&
@@ -32,7 +57,7 @@ const SelectCoinModal = (props) => {
                 <Line />
                 <CoinsWrapper>
                     {coinList && coinList.value.map((coin) => (
-                        <CoinWrapper onClick={() => {handleClick(coin)}} key={coin.id}>
+                        <CoinWrapper onClick={() => {handleClickOne(coin)}} key={coin.id}>
                         <CoinIcon src={coin.icon}/>
                         <CoinTextWrapper>
                             <CoinSymbol>{coin.symbol}</CoinSymbol>
