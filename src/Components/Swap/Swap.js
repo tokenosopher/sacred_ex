@@ -6,10 +6,11 @@ import {useWeb3React} from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import {setSwapButton} from "../../features/swapModal/swapButton";
 import {useSelector} from "react-redux";
+import {CoinIcon} from "../Modals/SelectCoinModal";
 
 const Swap = (props) => {
 
-    const [setConnectModal, setCoinModal, activeTokenAttributes] = props.functions
+    const [setConnectModal, setCoinModal] = props.functions
 
     const dispatch = useDispatch()
 
@@ -51,6 +52,7 @@ const Swap = (props) => {
                 <InputWrapper>
                     <InputFieldOne type="number" placeholder="0.0"/>
                     <SwapOneButtonWrapper onClick = {() => swapButton(1) }>
+                        <SwapCoinIcon src={tokenOne.value.icon} />
                     <p>{tokenOne && tokenOne.value.symbol}</p>
                         <DropDown/>
                     </SwapOneButtonWrapper>
@@ -60,6 +62,7 @@ const Swap = (props) => {
                 <InputWrapper>
                     <InputFieldTwo type="number" placeholder="0.0"/>
                     <SwapTwoButtonWrapper onClick = {() => swapButton(2)} >
+                        <SwapCoinIcon src={tokenTwo.value.icon} />
                         <p>{tokenTwo && tokenTwo.value.symbol}</p>
                         <DropDown/>
                     </SwapTwoButtonWrapper>
@@ -139,10 +142,10 @@ const InputFieldOne = styled.input`
 const SwapOneButtonWrapper = styled.button`
   position: absolute;
   right: 10px;
-  top: 25px;
+  top: 20px;
   border-radius: 20px;
-  width: 100px;
-  height: 40px;
+  width: 130px;
+  height: 45px;
   background-color: #0f1113;
   color: #ffffff;
   border: 1px grey solid;
@@ -153,13 +156,13 @@ const SwapOneButtonWrapper = styled.button`
   cursor: pointer;
   transition: border 0.2s ease-in-out;
   
-  
-  p {
-    margin-left: 10px;
-  }
   &:hover {
     border: 1px white solid;
   }
+`
+
+const SwapCoinIcon = styled(CoinIcon)`
+  margin-left: 5px;
 `
 
 const DropDown = styled(IoMdArrowDropdown)`

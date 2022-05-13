@@ -10,10 +10,6 @@ import {useState} from "react";
 
 const SelectCoinModal = (props) => {
 
-    const tokenOne = useSelector((state) => state.tokenOne)
-
-    const tokenTwo = useSelector((state) => state.tokenTwo)
-
     const swapButton = useSelector((state) => state.swapButton)
 
     const coinList = useSelector((state) => state.tokenList)
@@ -36,12 +32,6 @@ const SelectCoinModal = (props) => {
 
         setCoinModal(false);
     }
-
-        //
-        // }
-        // else {
-        //     dispatch(setTokenTwo(coin.symbol));
-        // }
 
 
 
@@ -82,6 +72,8 @@ export const Line = styled.hr`
   height: 1px;
   background-color: rgba(252, 252, 252, 0.25);
   border: rgba(252, 252, 252, 0.25);
+  margin-bottom: 0;
+  margin-top:0;
 `
 
 export const CoinsWrapper = styled.div`
@@ -92,9 +84,17 @@ export const CoinsWrapper = styled.div`
 export const CoinWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 10px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+  border-radius: 10px;
+  
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(124, 87, 87, 0.25);
+  }
 `
 
 export const CoinTextWrapper = styled.div`

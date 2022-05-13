@@ -73,6 +73,7 @@ export const ModalBox = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 10px;
+  border: 1px solid rgba(252, 252, 252, 0.25);
 `
 
 export const TitleWrapper = styled.div`

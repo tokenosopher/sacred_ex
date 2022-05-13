@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./IERC20Sacred.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 interface IFactory {
@@ -29,7 +29,7 @@ contract Exchange is ERC20 {
     //here you need to keep the reserve ratio constant - you don't want to mess with the reserve if the coin has already been deployed, b/c that would lead to arbitrage.
     //then, if your ratio is (token reserve / eth reserve) you multiply the result with the value of tokens with the ratio in order to get the amount of tokens that you have to deposit.
     function addLiquidity(uint256 _tokenAmount) public payable returns (uint256){
-        IERC20 tokenToShip = IERC20(tokenAddress);
+        IERC20Sacred tokenToShip = IERC20Sacred(tokenAddress);
 
         if (getReserve() == 0) {
             tokenToShip.transferFrom(msg.sender, address(this), _tokenAmount);
@@ -64,7 +64,6 @@ contract Exchange is ERC20 {
             uint256 liquidity = (totalSupply() * msg.value) / ethReserve;
             _mint(msg.sender, liquidity);
 
-
             return liquidity;
 
         }
@@ -72,7 +71,7 @@ contract Exchange is ERC20 {
     }
 
     function getReserve() public view returns (uint256) {
-        return IERC20(tokenAddress).balanceOf(address(this));
+        return IERC20Sacred(tokenAddress).balanceOf(address(this));
     }
 
 
@@ -140,7 +139,30 @@ contract Exchange is ERC20 {
 
         //transfer the tokens to the user if the require statement above checks out, using the
         //values we've retrieved.
-        IERC20(tokenAddress).transfer(_recipient, tokensBought);
+        IERC20Sacred(tokenAddress).transfer(_recipient, tokensBought);
+    }
+
+    //the function that allows swapping eth for tokens, using the functions above, with a sacred message:
+    function ethToTokenSacredOne(uint256 _minTokens, address _recipient, string memory _name, string memory _message) private {
+        //getting the reserve:
+        uint256 tokenReserve = getReserve();
+
+        //calculating how many tokens we would be getting
+        //notice that the value provided by the user is subtracted from the balance
+        //that's because by the time this function is called, the balance of the contract
+        //would have already included the eth that the user sent to the contract:
+        uint256 tokensBought = getAmount(
+            msg.value,
+            address(this).balance - msg.value,
+            tokenReserve);
+
+        //require that the _minTokens, which is calculated on the frontend and decided on by the user,
+        //is lower or equal to the tokens bought, so that the user doesn't get screwed.
+        require(tokensBought >= _minTokens, "slippage out of bounds");
+
+        //transfer the tokens to the user if the require statement above checks out, using the
+        //values we've retrieved.
+        IERC20Sacred(tokenAddress).transferSacredOne(_recipient, tokensBought, _name, _message);
     }
 
 
@@ -149,8 +171,17 @@ contract Exchange is ERC20 {
         ethToToken(_minTokens, msg.sender);
     }
 
+    //function that uses ethToToken to transfer to msg.sender
+    function ethToTokenSwapSacredOne(uint256 _minTokens, string memory _name, string memory _message) public payable {
+        ethToTokenSacredOne(_minTokens, msg.sender, _name, _message);
+    }
+
     function ethToTokenTransfer(uint256 _minTokens, address _recipient) public payable {
         ethToToken(_minTokens, _recipient);
+    }
+
+    function ethToTokenTransferSacredOne(uint256 _minTokens, address _recipient, string memory _name, string memory _message) public payable {
+        ethToTokenSacredOne(_minTokens, _recipient, _name, _message);
     }
 
     function tokenToEthSwap(uint256 _tokensSold, uint256 _minEth) public {
@@ -158,7 +189,7 @@ contract Exchange is ERC20 {
         //getting the amount of eth that will be bought:
         uint256 ethBought = getAmount(
             _tokensSold,
-            IERC20(tokenAddress).balanceOf(address(this)),
+            IERC20Sacred(tokenAddress).balanceOf(address(this)),
             address(this).balance);
 
         //require that the _minEth, which is calculated on the frontend and decided on by the user,is lower or equal to the eth bought, so that the user doesn't get screwed.
@@ -166,7 +197,7 @@ contract Exchange is ERC20 {
 
         //transferring the tokens to the exchange:
         //do not need to have a require statement because transferFrom throws exception in case balance is insufficient.
-        IERC20(tokenAddress).transferFrom(msg.sender, address(this), _tokensSold);
+        IERC20Sacred(tokenAddress).transferFrom(msg.sender, address(this), _tokensSold);
 
         //transferring eth to sender:
         (bool success,) = msg.sender.call{value : ethBought}("");
@@ -174,6 +205,29 @@ contract Exchange is ERC20 {
         //require that the transfer is successful:
         require(success, "Eth transfer failed");
     }
+
+    function tokenToEthSwapSacredOne(uint256 _tokensSold, uint256 _minEth, string memory _name, string memory _message) public {
+
+        //getting the amount of eth that will be bought:
+        uint256 ethBought = getAmount(
+            _tokensSold,
+            IERC20Sacred(tokenAddress).balanceOf(address(this)),
+            address(this).balance);
+
+        //require that the _minEth, which is calculated on the frontend and decided on by the user,is lower or equal to the eth bought, so that the user doesn't get screwed.
+        require(ethBought >= _minEth, "slippage out of bounds");
+
+        //transferring the tokens to the exchange:
+        //do not need to have a require statement because transferFrom throws exception in case balance is insufficient.
+        IERC20Sacred(tokenAddress).transferFromSacredOne(msg.sender, address(this), _tokensSold, _name, _message);
+
+        //transferring eth to sender:
+        (bool success,) = msg.sender.call{value : ethBought}("");
+
+        //require that the transfer is successful:
+        require(success, "Eth transfer failed");
+    }
+
 
 
     //takes the amount of tokens to be exchanged
@@ -191,7 +245,7 @@ contract Exchange is ERC20 {
         payable(msg.sender).transfer(ethAmount);
 
         //transfer the ERC20 tokens to the person calling the amount:
-        IERC20(tokenAddress).transfer(msg.sender, tokenAmount);
+        IERC20Sacred(tokenAddress).transfer(msg.sender, tokenAmount);
 
         return (ethAmount, tokenAmount);
     }
@@ -213,7 +267,7 @@ contract Exchange is ERC20 {
         //getting the amount of eth that can be bought with the token amount provided:
         uint256 ethBought = getAmount(
             _tokensSold,
-            IERC20(tokenAddress).balanceOf(address(this)),
+            IERC20Sacred(tokenAddress).balanceOf(address(this)),
             address(this).balance);
 
         IExchange(_tokenAddress).ethToTokenTransfer{value: ethBought}(_minTokensBought, msg.sender);

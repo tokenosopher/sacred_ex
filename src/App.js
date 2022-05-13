@@ -1,17 +1,15 @@
 import React from 'react';
 import {useState, useEffect} from "react";
 import styled from 'styled-components';
+
 import Header from "./Components/Header/Header";
 import Swap from "./Components/Swap/Swap";
-
-
 import Footer from "./Components/Footer/Footer";
 import Guidelines from "./Components/Guidelines/Guidelines";
 import GratitudeMessage from "./Components/Messages/GratitudeMessage";
 import ConnectModal from "./Components/Modals/ConnectModal";
 import SelectCoinModal from "./Components/Modals/SelectCoinModal";
 import {useSelector} from "react-redux";
-import tokenOneSlice from "./features/tokens/tokenOneSlice";
 
 function App() {
 
@@ -44,17 +42,6 @@ function App() {
 
     }, [tokenOne, tokenTwo])
 
-    //
-    // const callLibrary = async() => {
-    //     if (!library){
-    //         return;
-    //     }
-    //     else {
-    //         const amount = await library.getBalance(account)
-    //         console.log(amount.toString())
-    //     }
-    // }
-
   return (
       <>
       <ConnectModal functions={[connectModal, setConnectModal]}/>
@@ -62,8 +49,8 @@ function App() {
       <Main className="App">
         <Header functions={[connectModal, setConnectModal]}/>
         <Guidelines functions={[activeTokenAttributes]}/>
-        <Swap functions={[setConnectModal, setCoinModal, activeTokenAttributes]}/>
-        <GratitudeMessage/>
+        <Swap functions={[setConnectModal, setCoinModal]}/>
+        <GratitudeMessage functions = {[activeTokenAttributes]}/>
         <Footer/>
       </Main>
       </>

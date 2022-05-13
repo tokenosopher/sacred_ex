@@ -5,9 +5,11 @@ import {BiCheckboxChecked} from 'react-icons/bi';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {useState} from "react";
 
-const Guidelines = () => {
+const Guidelines = (props) => {
 
     const [checked, setChecked] = useState(true);
+
+    const [activeTokenAttributes]= props.functions
 
 
     return (
@@ -21,21 +23,20 @@ const Guidelines = () => {
                             <BiCheckbox size={30} onClick={() => setChecked(true)}/>
                     }
                 </CheckboxWrapper>
-                <h3>Include message of gratitude</h3>
+                <h3>{activeTokenAttributes && activeTokenAttributes.messageTitle}</h3>
                 <QuestionMarkWrapper>
                     <AiOutlineQuestionCircle size={20}/>
                 </QuestionMarkWrapper>
             </TitleWrapper>
             <StatementWrapper>
-                <p>Help to inspire gratitude and provide value to the coin by writing what you are grateful for when you
-                    trade it.</p>
+                <p>{activeTokenAttributes && activeTokenAttributes.messageDescription}</p>
             </StatementWrapper>
             <InputsWrapper checked={checked}>
                 <InputFirstRow>
-                    <InputName type="text" placeholder="Name"/>
-                    <p>is grateful for</p>
+                    <InputName type="text" placeholder={activeTokenAttributes && activeTokenAttributes.messagePlaceholderOne}/>
+                    <p>{activeTokenAttributes && activeTokenAttributes.messageConnector}</p>
                 </InputFirstRow>
-                <InputGratitudeObject type={"textarea"} rows={"5"} placeholder={"...something"}/>
+                <InputGratitudeObject type={"textarea"} rows={"5"} placeholder={activeTokenAttributes && activeTokenAttributes.messagePlaceholderTwo}/>
             </InputsWrapper>
         </Container>
     )

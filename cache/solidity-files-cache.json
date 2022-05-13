@@ -37,8 +37,8 @@
       ]
     },
     "C:\\code\\sacred_ex\\src\\contracts\\Exchange.sol": {
-      "lastModificationDate": 1652000679419,
-      "contentHash": "38b5920b88bd0ab49a78cb0000b0889c",
+      "lastModificationDate": 1652433472732,
+      "contentHash": "d771809ac0ae3a019f74c85fa2b85c78",
       "sourceName": "src/contracts/Exchange.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -64,7 +64,7 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "./IERC20Sacred.sol",
         "@openzeppelin/contracts/token/ERC20/ERC20.sol"
       ],
       "versionPragmas": [
@@ -223,8 +223,8 @@
       ]
     },
     "C:\\code\\sacred_ex\\src\\contracts\\Factory.sol": {
-      "lastModificationDate": 1652000679445,
-      "contentHash": "2f3cc7202646f5d6cf0fa66b674cd2c2",
+      "lastModificationDate": 1652394197212,
+      "contentHash": "ac182914439864a2e487dc004ff5ed6d",
       "sourceName": "src/contracts/Factory.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -250,7 +250,8 @@
         }
       },
       "imports": [
-        "./Exchange.sol"
+        "./Exchange.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -294,6 +295,151 @@
       ],
       "artifacts": [
         "Token"
+      ]
+    },
+    "C:\\code\\sacred_ex\\src\\contracts\\GeneralPeaceToken.sol": {
+      "lastModificationDate": 1652354150683,
+      "contentHash": "08f4fd0c3d41c139202ae4f52ee3d1df",
+      "sourceName": "src/contracts/GeneralPeaceToken.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "./SacredCoin.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "GeneralPeaceToken"
+      ]
+    },
+    "C:\\code\\sacred_ex\\src\\contracts\\SacredCoin.sol": {
+      "lastModificationDate": 1652353309632,
+      "contentHash": "99832a0bfe671c9861130cc0b9a69157",
+      "sourceName": "src/contracts/SacredCoin.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SacredCoin"
+      ]
+    },
+    "C:\\code\\sacred_ex\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
+      "lastModificationDate": 1651143970043,
+      "contentHash": "8398972af73b4e9e5ff3b31cad86234f",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "C:\\code\\sacred_ex\\src\\contracts\\IERC20Sacred.sol": {
+      "lastModificationDate": 1652391414506,
+      "contentHash": "1bac94a24b94aaf7e85bdfe773c375a8",
+      "sourceName": "src/contracts/IERC20Sacred.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20Sacred"
       ]
     }
   }

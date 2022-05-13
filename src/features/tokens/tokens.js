@@ -2,6 +2,10 @@ import polygon_token from "../../assets/token_icons/polygon_token.png";
 import gratitude_coin from "../../assets/token_icons/gratitude_coin.png";
 import gepeto_coin from "../../assets/token_icons/gepeto_coin.png";
 
+//importing contractAddresses, which was exported as a json file from hardhat when the contract was deployed:
+import contractAddresses from "../../artifacts/src/contract_addresses/contractAddresses.json";
+
+
 let tokens;
 export default tokens = [
     {
@@ -32,10 +36,11 @@ export default tokens = [
         icon: gepeto_coin,
         guidelineTitle: "General Peace Token Guideline",
         guidelines: "Every time you buy or sell the coin, aim to share a message that you think would inspire peace between communities that are currently in conflict with one another. It can be a personal story that inspires worldwide peace, an inspiring message or a work of art.",
-        messageTitle: "Include a message of peace",
+        messageTitle: "Include message of peace",
         messageDescription: "Help to inspire peace and provide value to the coin by writing a message that you think would inspire peace among groups that are in conflict at the moment.",
         messagePlaceholderOne: "Name",
         messageConnector: "'s message of peace is",
-        messagePlaceholderTwo: "...something"
+        messagePlaceholderTwo: "...something",
+        address: contractAddresses.generalPeaceTokenAddress
     }
 ]
