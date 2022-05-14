@@ -15,7 +15,7 @@ const Swap = (props) => {
 
     const {active, library} = useWeb3React();
 
-    const [setConnectModal, setCoinModal] = props.functions
+    const [setConnectModal, setCoinModal, setSettingsModal] = props.functions
 
     const dispatch = useDispatch()
 
@@ -40,14 +40,15 @@ const Swap = (props) => {
 
             console.log(fieldOneBN.toString())
             console.log(approvedBN.toString())
-            if (active && fieldOneBN.gt(approvedBN)) {
+            if (fieldOneBN.gt(approvedBN)) {
                 console.log("approved amount is less than field one")
                 setShowApprovedBtn(true)
             }
 
-            // if (active !fieldOneBN.gt(approvedBN)){
-            //
-            // }
+            if (fieldOneBN.lt(approvedBN)){
+                console.log("approved amount is greater than field one")
+                setShowApprovedBtn(false)
+            }
         }
 
     },[fieldOne, active, approvedAmount])
@@ -94,9 +95,7 @@ const Swap = (props) => {
         <Container>
             <MiniHeader>
                 <HeaderText>Swap</HeaderText>
-                <GearWrapper>
-                    <BsGear/>
-                </GearWrapper>
+                    <GearIcon onClick={() => {setSettingsModal(true)}}/>
             </MiniHeader>
             <SwapColumnOne>
                 <InputWrapper>
@@ -152,6 +151,19 @@ const HeaderText = styled.div`
 `
 
 const GearWrapper = styled(HeaderText)`
+`
+
+const GearIcon = styled(BsGear)`
+  margin: 10px 10px 0 10px;
+  
+  //make a transition:
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    border-radius: 50px;
+    box-shadow: 0 0 10px #fff;
+  }
+
 `
 
 

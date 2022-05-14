@@ -9,12 +9,14 @@ import Guidelines from "./Components/Guidelines/Guidelines";
 import GratitudeMessage from "./Components/Messages/GratitudeMessage";
 import ConnectModal from "./Components/Modals/ConnectModal";
 import SelectCoinModal from "./Components/Modals/SelectCoinModal";
+import SwapSettingsModal from "./Components/Modals/SwapSettingsModal";
 import {useSelector} from "react-redux";
 import {ethers} from 'ethers';
 import {useWeb3React} from "@web3-react/core";
 
 import {useDispatch} from "react-redux";
 import {setAllowance} from "./features/activeTokenNumbers/activeTokenNumbers";
+
 
 function App() {
 
@@ -27,6 +29,8 @@ function App() {
     const [connectModal, setConnectModal] = useState(false);
 
     const [coinModal, setCoinModal] = useState(false);
+
+    const [settingsModal, setSettingsModal] = useState(true);
 
     //this gets the token list from the redux store:
     const tokenList = useSelector((state) => state.tokenList)
@@ -73,10 +77,11 @@ function App() {
       <>
       <ConnectModal functions={[connectModal, setConnectModal]}/>
       <SelectCoinModal functions={[coinModal, setCoinModal]}/>
+      <SwapSettingsModal functions={[settingsModal, setSettingsModal]}/>
       <Main className="App">
         <Header functions={[connectModal, setConnectModal]}/>
         <Guidelines functions={[activeTokenAttributes]}/>
-        <Swap functions={[setConnectModal, setCoinModal]}/>
+        <Swap functions={[setConnectModal, setCoinModal, setSettingsModal]}/>
         <GratitudeMessage functions = {[activeTokenAttributes]}/>
         <Footer/>
       </Main>

@@ -140,7 +140,7 @@ export const WalletText = styled.p`
 `
 
 
-const ButtonWrapper = styled.div`
+export const ButtonWrapper = styled.div`
     display:flex;
     justify-content: center;
     align-items: center;

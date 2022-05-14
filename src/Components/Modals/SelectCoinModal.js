@@ -68,7 +68,7 @@ export const ModalBoxCoins = styled(ModalBox)`
 `
 
 export const Line = styled.hr`
-  width: 480px;
+  width: 100%;
   height: 1px;
   background-color: rgba(252, 252, 252, 0.25);
   border: rgba(252, 252, 252, 0.25);
