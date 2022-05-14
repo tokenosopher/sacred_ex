@@ -1,3 +1,6 @@
+
+const {ethers} = require('hardhat')
+
 export const truncateAddress = (address) => {
     if (!address) return "No Account";
     const match = address.match(
@@ -11,3 +14,7 @@ export const toHex = (num) => {
     const val = Number(num);
     return "0x" + val.toString(16);
 };
+
+export const weiFromEther = (amount) => {
+    return ethers.utils.parseUnits(amount)
+}

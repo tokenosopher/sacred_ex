@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
 import {BsGear} from 'react-icons/bs'
 import {IoMdArrowDropdown} from 'react-icons/io'
@@ -7,8 +7,12 @@ import { useDispatch } from "react-redux";
 import {setSwapButton} from "../../features/swapModal/swapButton";
 import {useSelector} from "react-redux";
 import {CoinIcon} from "../Modals/SelectCoinModal";
+import {weiFromEther} from "../../constants/utils";
+import {ethers} from "ethers";
 
 const Swap = (props) => {
+
+    const {active} = useWeb3React();
 
     const [setConnectModal, setCoinModal] = props.functions
 
@@ -17,25 +21,49 @@ const Swap = (props) => {
 
     const tokenOne = useSelector((state) => state.tokenOne)
     const tokenTwo = useSelector((state) => state.tokenTwo)
+    // const approvedAmount = useSelector((state) => state.activeTokenNumbers.approved)
+
+    const [fieldOne, setFieldOne] = useState()
+    const [fieldTwo, setFieldTwo] = useState()
+    // const [showApprovedBtn, setShowApprovedBtn] = useState(false)
 
 
 
-    const { active} = useWeb3React();
 
-    const buttonFunction = () => {
+
+    // useEffect(() => {
+    //     // convert fieldOne to big number:
+    //     const fieldOneBN = ethers.utils.parseEther(fieldOne)
+    //
+    //     //see if fieldOneBN is smaller than approved amount:
+    //     if (active && fieldOneBN.lt(approvedAmount)) {
+    //         setShowApprovedBtn(true)
+    //     }
+    // },[fieldOne])
+
+    const swapOrConnectBtn = () => {
         if (active) {
-            return
+            if (tokenOne.value.id === "1") {
+                console.log("Token one is matic")
+            }
+            else if (tokenOne.value.id === "2") {
+                console.log("Token one is GRTFUL")
+            }
+
+            else if (tokenOne.value.id === "3") {
+                console.log("Token one is GEPETO")
+            }
         }
         else {
             setConnectModal(true)
         }
     }
 
-    const swapButton = (swapButtonNr) => {
+    const coinSelectorBtn = (fieldOneOrTwo) => {
         setCoinModal(true)
         dispatch(
             setSwapButton(
-                swapButtonNr
+                fieldOneOrTwo
             )
         )
     }
@@ -50,8 +78,10 @@ const Swap = (props) => {
             </MiniHeader>
             <SwapColumnOne>
                 <InputWrapper>
-                    <InputFieldOne type="number" placeholder="0.0"/>
-                    <SwapOneButtonWrapper onClick = {() => swapButton(1) }>
+                    <InputFieldOne onChange={(e) => setFieldOne(e.target.value)} value={fieldOne} type="number" placeholder="0.0"/>
+                    {/*{showApprovedBtn && <ApproveBtn showApprovedBtn={showApprovedBtn}>Approve</ApproveBtn>}*/}
+
+                    <SwapOneButtonWrapper onClick = {() => coinSelectorBtn(1) }>
                         <SwapCoinIcon src={tokenOne.value.icon} />
                     <p>{tokenOne && tokenOne.value.symbol}</p>
                         <DropDown/>
@@ -60,15 +90,15 @@ const Swap = (props) => {
             </SwapColumnOne>
             <SwapColumnTwo>
                 <InputWrapper>
-                    <InputFieldTwo type="number" placeholder="0.0"/>
-                    <SwapTwoButtonWrapper onClick = {() => swapButton(2)} >
+                    <InputFieldTwo onChange={(e) => setFieldTwo(e.target.value)} value={fieldTwo} type="number" placeholder="0.0"/>
+                    <SwapTwoButtonWrapper onClick = {() => coinSelectorBtn(2)} >
                         <SwapCoinIcon src={tokenTwo.value.icon} />
                         <p>{tokenTwo && tokenTwo.value.symbol}</p>
                         <DropDown/>
                     </SwapTwoButtonWrapper>
                 </InputWrapper>
             </SwapColumnTwo>
-            <ButtonOption onClick={() => buttonFunction()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
+            <ButtonOption onClick={() => swapOrConnectBtn()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
 
         </Container>
     )
@@ -139,6 +169,10 @@ const InputFieldOne = styled.input`
     border: 1px solid #737373;
   }
 `
+
+
+
+
 const SwapOneButtonWrapper = styled.button`
   position: absolute;
   right: 10px;
@@ -154,10 +188,29 @@ const SwapOneButtonWrapper = styled.button`
   justify-content: space-between;
   display: flex;
   cursor: pointer;
-  transition: border 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   
   &:hover {
     border: 1px white solid;
+  }
+`
+
+const ApproveBtn = styled(SwapOneButtonWrapper)`
+  //hide:
+  
+  position: absolute;
+  right: 150px;
+  top: 27px;
+  width: 70px;
+  height: 30px;
+  //border-radius: 10px;
+  color: red;
+  border: 1px red solid;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  &:hover {
+    color: white;
   }
 `
 

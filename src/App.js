@@ -10,8 +10,17 @@ import GratitudeMessage from "./Components/Messages/GratitudeMessage";
 import ConnectModal from "./Components/Modals/ConnectModal";
 import SelectCoinModal from "./Components/Modals/SelectCoinModal";
 import {useSelector} from "react-redux";
+import {ethers} from 'ethers';
+import {useWeb3React} from "@web3-react/core";
+
+import {useDispatch} from "react-redux";
+import {setAllowance} from "./features/activeTokenNumbers/activeTokenNumbers";
 
 function App() {
+
+    const dispatch = useDispatch();
+
+    const { active, account, library} = useWeb3React();
 
     const [activeTokenAttributes, setActiveTokenAttributes] = useState();
 
@@ -41,6 +50,24 @@ function App() {
         }
 
     }, [tokenOne, tokenTwo])
+
+    //useEffect that updates the allowance for the token whenever token one changes:
+    useEffect( () => {
+        async function updateAllowance() {
+                const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
+                const allowance = await token.allowance(account, tokenOne.value.exchangeAddress)
+                dispatch(
+                    setAllowance(allowance)
+                )
+            }
+
+    if (tokenOne.value.id !== "1" && active) {
+        updateAllowance().catch(console.error)
+    }
+    else {
+        setAllowance("")
+    }
+    }, [tokenOne])
 
   return (
       <>

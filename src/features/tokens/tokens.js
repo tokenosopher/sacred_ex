@@ -2,6 +2,9 @@ import polygon_token from "../../assets/token_icons/polygon_token.png";
 import gratitude_coin from "../../assets/token_icons/gratitude_coin.png";
 import gepeto_coin from "../../assets/token_icons/gepeto_coin.png";
 
+//importing the IERC20Interface:
+import IERC20Sacred from "../../artifacts/src/contracts/IERC20Sacred.sol/IERC20Sacred.json"
+
 //importing contractAddresses, which was exported as a json file from hardhat when the contract was deployed:
 import contractAddresses from "../../artifacts/src/contract_addresses/contractAddresses.json";
 
@@ -41,6 +44,8 @@ export default tokens = [
         messagePlaceholderOne: "Name",
         messageConnector: "'s message of peace is",
         messagePlaceholderTwo: "...something",
-        address: contractAddresses.generalPeaceTokenAddress
+        address: contractAddresses.generalPeaceTokenAddress,
+        abi: IERC20Sacred.abi,
+        exchangeAddress: contractAddresses.exchangeAddress
     }
 ]
