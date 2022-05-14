@@ -9,10 +9,11 @@ import {useSelector} from "react-redux";
 import {CoinIcon} from "../Modals/SelectCoinModal";
 import {weiFromEther} from "../../constants/utils";
 import {ethers} from "ethers";
+import {setAllowance} from "../../features/activeTokenNumbers/activeTokenNumbers";
 
 const Swap = (props) => {
 
-    const {active} = useWeb3React();
+    const {active, library} = useWeb3React();
 
     const [setConnectModal, setCoinModal] = props.functions
 
@@ -21,25 +22,46 @@ const Swap = (props) => {
 
     const tokenOne = useSelector((state) => state.tokenOne)
     const tokenTwo = useSelector((state) => state.tokenTwo)
-    // const approvedAmount = useSelector((state) => state.activeTokenNumbers.approved)
+    const approvedAmount = useSelector((state) => state.activeTokenNumbers.approved)
 
-    const [fieldOne, setFieldOne] = useState()
-    const [fieldTwo, setFieldTwo] = useState()
-    // const [showApprovedBtn, setShowApprovedBtn] = useState(false)
+    const [fieldOne, setFieldOne] = useState("")
+    const [fieldTwo, setFieldTwo] = useState("")
+    const [showApprovedBtn, setShowApprovedBtn] = useState(false)
+
+    useEffect(() => {
+
+        let fieldOneBN
+        // check to see if amount needs to be approved if field one is filled,
+        // there is an active account and approved amount is available:
+        if (fieldOne && active && approvedAmount) {
+            console.log("useEffect being performed")
+            const fieldOneBN = ethers.utils.parseUnits(fieldOne, "ether")
+            const approvedBN = ethers.BigNumber.from(approvedAmount)
+
+            console.log(fieldOneBN.toString())
+            console.log(approvedBN.toString())
+            if (active && fieldOneBN.gt(approvedBN)) {
+                console.log("approved amount is less than field one")
+                setShowApprovedBtn(true)
+            }
+
+            // if (active !fieldOneBN.gt(approvedBN)){
+            //
+            // }
+        }
+
+    },[fieldOne, active, approvedAmount])
 
 
-
-
-
-    // useEffect(() => {
-    //     // convert fieldOne to big number:
-    //     const fieldOneBN = ethers.utils.parseEther(fieldOne)
-    //
-    //     //see if fieldOneBN is smaller than approved amount:
-    //     if (active && fieldOneBN.lt(approvedAmount)) {
-    //         setShowApprovedBtn(true)
-    //     }
-    // },[fieldOne])
+    const handleApprove = async () => {
+        const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
+        const allowanceEth = ethers.utils.parseUnits(fieldOne, "ether")
+        await token.approve(tokenOne.value.exchangeAddress, allowanceEth)
+        dispatch(
+            setAllowance(allowanceEth.toString())
+        )
+        setShowApprovedBtn(false)
+    }
 
     const swapOrConnectBtn = () => {
         if (active) {
@@ -79,7 +101,7 @@ const Swap = (props) => {
             <SwapColumnOne>
                 <InputWrapper>
                     <InputFieldOne onChange={(e) => setFieldOne(e.target.value)} value={fieldOne} type="number" placeholder="0.0"/>
-                    {/*{showApprovedBtn && <ApproveBtn showApprovedBtn={showApprovedBtn}>Approve</ApproveBtn>}*/}
+                    {showApprovedBtn && <ApproveBtn onClick={() => handleApprove()}>Approve</ApproveBtn>}
 
                     <SwapOneButtonWrapper onClick = {() => coinSelectorBtn(1) }>
                         <SwapCoinIcon src={tokenOne.value.icon} />

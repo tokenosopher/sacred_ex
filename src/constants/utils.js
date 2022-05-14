@@ -1,5 +1,5 @@
 
-const {ethers} = require('hardhat')
+import {ethers} from 'ethers';
 
 export const truncateAddress = (address) => {
     if (!address) return "No Account";

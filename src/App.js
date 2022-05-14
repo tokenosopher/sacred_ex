@@ -51,13 +51,13 @@ function App() {
 
     }, [tokenOne, tokenTwo])
 
-    //useEffect that updates the allowance for the token whenever token one changes:
+    //useEffect that updates the allowance for the token whenever token one changes, or whenever the user logs in:
     useEffect( () => {
         async function updateAllowance() {
                 const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
                 const allowance = await token.allowance(account, tokenOne.value.exchangeAddress)
                 dispatch(
-                    setAllowance(allowance)
+                    setAllowance(allowance.toString())
                 )
             }
 
@@ -67,7 +67,7 @@ function App() {
     else {
         setAllowance("")
     }
-    }, [tokenOne])
+    }, [tokenOne, active])
 
   return (
       <>
