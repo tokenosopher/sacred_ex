@@ -62,7 +62,7 @@ const Swap = (props) => {
             setShowApprovedBtn(true)
         }
 
-        if (fieldOneBN.lt(approvedBN)){
+        if (fieldOneBN.lte(approvedBN)){
             console.log("approved amount is greater than field one")
             setShowApprovedBtn(false)
         }
