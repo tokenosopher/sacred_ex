@@ -44,6 +44,7 @@ function App() {
     const tokenTwo = useSelector((state) => state.tokenTwo)
 
     //use effect that updates the active token attributes whenever the active token changes:
+    //if both tokens are matic, then it switches to the default - gratitude coin
     useEffect(() => {
         if (tokenOne.value.symbol !== 'MATIC') {
             setActiveTokenAttributes(tokenOne.value)

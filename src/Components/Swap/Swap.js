@@ -1,15 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import {BsGear} from 'react-icons/bs'
 import {IoMdArrowDropdown} from 'react-icons/io'
 import {useWeb3React} from "@web3-react/core";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setSwapButton} from "../../features/swapModal/swapButton";
-import {useSelector} from "react-redux";
 import {CoinIcon} from "../Modals/SelectCoinModal";
-import {weiFromEther} from "../../constants/utils";
 import {ethers} from "ethers";
 import {setAllowance} from "../../features/activeTokenNumbers/activeTokenNumbers";
+import Exchange from "../../artifacts/src/contracts/Exchange.sol/Exchange.json";
+import {weiFromEther, etherFromWei} from "../../constants/utils";
 
 const Swap = (props) => {
 
@@ -28,6 +28,9 @@ const Swap = (props) => {
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
     const [showApprovedBtn, setShowApprovedBtn] = useState(false)
+
+    const [activeToken, setActiveToken] = useState("")
+    const [activeContract, setActiveContract] = useState("")
 
     useEffect(() => {
 
@@ -67,6 +70,88 @@ const Swap = (props) => {
             setShowApprovedBtn(false)
         }
     }
+
+    //returns a new instance of the exchange contract:
+    const setActiveExchangeContract = (coin) => {
+        return new ethers.Contract(coin.exchangeAddress, Exchange.abi, library)
+    }
+
+
+    // //sets the active token:
+    // useEffect(() => {
+    //     if (tokenOne.value.symbol !== 'MATIC' && tokenTwo.value.symbol === 'MATIC') {
+    //         setActiveToken({
+    //             token: tokenOne.value,
+    //             position: 1
+    //         })
+    //         console.log("set token value at position 1")
+    //         setActiveContract(setActiveExchangeContract(tokenOne.value))
+    //     }
+    //     else if (tokenOne.value.symbol === 'MATIC' && tokenTwo.value.symbol !== 'MATIC') {
+    //         setActiveToken({
+    //             token: tokenTwo.value,
+    //             position: 2})
+    //         console.log("set token value at position 2")
+    //         setActiveContract(setActiveExchangeContract(tokenTwo.value))
+    //     }
+    //     else {
+    //         setActiveToken("")
+    //         console.log("set token value to be 0")
+    //         setActiveContract("")
+    //     }
+    // }, [tokenOne, tokenTwo])
+    //
+    // useEffect(() => {
+    //     async function getEthAmount() {
+    //         const fieldOneEth = weiFromEther(fieldOne)
+    //         const contract = new ethers.Contract(tokenOne.value.exchangeAddress, Exchange.abi, library.getSigner())
+    //         const ethAmount = await contract.getEthAmount(fieldOneEth)
+    //         console.log(ethAmount.toString())
+    //     }
+    //
+    //     if (activeToken && (activeToken.position === 1 && active) && (Number(fieldOne) > 0)) {
+    //     getEthAmount()
+    // }
+    //     }, [fieldOne])
+
+    ///sets the output in field two based on the value in field one:
+    useEffect(() => {
+        async function getAmount() {
+            if (tokenOne.value.symbol !== 'MATIC' &&
+                tokenTwo.value.symbol === 'MATIC' &&
+                fieldOne
+            ) {
+                const contract = new ethers.Contract(tokenOne.value.exchangeAddress, Exchange.abi, library.getSigner())
+                const fieldOneWei = weiFromEther(fieldOne)
+                const ethAmount = await contract.getEthAmount(fieldOneWei)
+                const ethAmountScaled = etherFromWei(ethAmount)
+                //round ethAmountScaled to 5 decimal places
+                const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
+                setFieldTwo(ethAmountRounded)
+                console.log(ethAmountRounded.toString())
+        }
+            else if (tokenOne.value.symbol === 'MATIC' &&
+                tokenTwo.value.symbol !== 'MATIC' &&
+                fieldOne
+            ) {
+                const contract = new ethers.Contract(tokenTwo.value.exchangeAddress, Exchange.abi, library.getSigner())
+                const fieldOneWei = weiFromEther(fieldOne)
+                const tokenAmount = await contract.getTokenAmount(fieldOneWei)
+                const tokenAmountScaled = etherFromWei(tokenAmount)
+                //round tokenAmountScaled to 8 decimal places
+                const tokenAmountRounded = Math.round(tokenAmountScaled * 100000000) / 100000000
+                setFieldTwo(tokenAmountRounded)
+                console.log(tokenAmountRounded.toString())
+            }
+        }
+        if (active) {
+            getAmount()
+        }
+
+    }, [fieldOne, active])
+
+
+
 
 
 

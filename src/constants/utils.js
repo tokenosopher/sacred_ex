@@ -18,3 +18,7 @@ export const toHex = (num) => {
 export const weiFromEther = (amount) => {
     return ethers.utils.parseUnits(amount)
 }
+
+export const etherFromWei = (amount) => {
+    return ethers.utils.formatEther(amount)
+}
