@@ -15,7 +15,10 @@ import {ethers} from 'ethers';
 import {useWeb3React} from "@web3-react/core";
 
 import {useDispatch} from "react-redux";
-import {setAllowance} from "./features/activeTokenNumbers/activeTokenNumbers";
+import {
+    setAllowance,
+    setAllowanceAndBalance
+} from "./features/activeTokenNumbers/activeTokenNumbers";
 
 
 function App() {
@@ -55,19 +58,22 @@ function App() {
 
     }, [tokenOne, tokenTwo])
 
-    //useEffect that updates the allowance and the user balance for the token whenever token one changes, or whenever the user logs in:
-    useEffect( () => {
+    //useEffect that updates the allowance and the user balance for the token in redux whenever token one changes, or whenever the user logs in:
+    useEffect(() => {
         async function updateAllowance() {
-                const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
-                const allowance = await token.allowance(account, tokenOne.value.exchangeAddress)
-                const balance = await token.balanceOf(account)
+            const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
+            const tokenAllowance = await token.allowance(account, tokenOne.value.exchangeAddress)
+            const balance = await token.balanceOf(account)
 
-                dispatch(
-                    setAllowance(allowance.toString())
-                )
-            }
+            dispatch(
+                setAllowanceAndBalance({
+                        approved: tokenAllowance.toString(),
+                        balance: balance.toString()
+                    })
+            )
+        }
 
-    if (tokenOne.value.id !== "1" && tokenOne.value.id !== "2" && active) {
+    if (tokenOne.value.id !== "1" && active) {
         updateAllowance().catch(console.error)
     }
     else {

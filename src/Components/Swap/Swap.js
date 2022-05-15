@@ -23,6 +23,7 @@ const Swap = (props) => {
     const tokenOne = useSelector((state) => state.tokenOne)
     const tokenTwo = useSelector((state) => state.tokenTwo)
     const approvedAmount = useSelector((state) => state.activeTokenNumbers.approved)
+    const balance = useSelector((state) => state.activeTokenNumbers.balance)
 
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
@@ -33,10 +34,21 @@ const Swap = (props) => {
         // check to see if amount needs to be approved if field one is filled,
         // there is an active account and approved amount is available:
         if (fieldOne && active && approvedAmount) {
-           checkIfApprovalNeeded()
+            checkIfApprovalNeeded()
+            checkIfBalanceIsSufficient()
         }
 
     },[fieldOne, active, approvedAmount])
+
+    //check if fieldOne value is higher than balance:
+    const checkIfBalanceIsSufficient = () => {
+        const fieldOneBN = ethers.utils.parseUnits(fieldOne, "ether")
+        const balanceBN = ethers.BigNumber.from(balance)
+
+        if (fieldOneBN.gt(balanceBN)) {
+            console.log("Not enough balance for the transaction")
+        }
+    }
 
 
     const checkIfApprovalNeeded = () => {
@@ -55,6 +67,7 @@ const Swap = (props) => {
             setShowApprovedBtn(false)
         }
     }
+
 
 
     const handleApprove = async () => {
