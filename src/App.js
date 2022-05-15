@@ -30,7 +30,7 @@ function App() {
 
     const [coinModal, setCoinModal] = useState(false);
 
-    const [settingsModal, setSettingsModal] = useState(true);
+    const [settingsModal, setSettingsModal] = useState(false);
 
     //this gets the token list from the redux store:
     const tokenList = useSelector((state) => state.tokenList)
@@ -55,17 +55,19 @@ function App() {
 
     }, [tokenOne, tokenTwo])
 
-    //useEffect that updates the allowance for the token whenever token one changes, or whenever the user logs in:
+    //useEffect that updates the allowance and the user balance for the token whenever token one changes, or whenever the user logs in:
     useEffect( () => {
         async function updateAllowance() {
                 const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
                 const allowance = await token.allowance(account, tokenOne.value.exchangeAddress)
+                const balance = await token.balanceOf(account)
+
                 dispatch(
                     setAllowance(allowance.toString())
                 )
             }
 
-    if (tokenOne.value.id !== "1" && active) {
+    if (tokenOne.value.id !== "1" && tokenOne.value.id !== "2" && active) {
         updateAllowance().catch(console.error)
     }
     else {

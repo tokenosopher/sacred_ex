@@ -19,7 +19,7 @@ contract GeneralPeaceToken is ERC20, SacredCoin {
     }
 
     function _SacredMessage(string memory _name, string memory _message) private {
-        emit SacredEvent(string(abi.encodePacked(_name, "'s message of peace is", _message)));
+        emit SacredEvent(string(abi.encodePacked(_name, "'s message of peace is ", _message)));
     }
 
     function transferSacredOne(address _to, uint _tokens, string memory _name, string memory _message) public returns (bool) {

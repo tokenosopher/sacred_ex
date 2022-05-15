@@ -2,9 +2,44 @@ import React from 'react';
 import styled from 'styled-components';
 import {ModalContainer, ModalBox, TitleWrapper, ModalTitle, AiOutlineCloseBtn, ButtonWrapper, CloseButton} from "./ConnectModal";
 import {Line} from "./SelectCoinModal";
+import {useDispatch, useSelector} from "react-redux";
+import {setGlobalSlippage} from "../../features/activeTokenNumbers/activeTokenNumbers";
+import {useEffect, useState} from "react";
 
 const SwapSettingsModal = (props) => {
     const [settingsModal, setSettingsModal] = props.functions
+
+    const globalSlippage = useSelector((state) => state.activeTokenNumbers.globalSlippage)
+
+    const [localSlippage, setLocalSlippage] = useState(globalSlippage)
+
+    const dispatch = useDispatch()
+
+    //function that handles the apply button and changes the slippage in the redux store
+    const handleApply = () => {
+        if (localSlippage <=100) {
+            dispatch(
+                setGlobalSlippage(localSlippage)
+            )
+            setSettingsModal(false)
+        }
+        else {
+            console.log("nope!")
+        }
+
+    }
+
+    const handleCancel = () => {
+        setLocalSlippage(globalSlippage)
+        setSettingsModal(false)
+    }
+
+    const handleSlippageField = (e) => {
+        let { value, min, max } = e.target;
+        if (!value || (Number(value) >= Number(min) && Number(value) <= Number(max))) {
+            (setLocalSlippage(value))
+        }
+    }
 
     return (
         settingsModal &&
@@ -12,20 +47,25 @@ const SwapSettingsModal = (props) => {
             <ModalBoxSwapSettings>
                 <TitleWrapper>
                     <ModalTitle>Swap Settings</ModalTitle>
-                    <AiOutlineCloseBtn onClick={() => {setSettingsModal(false)}}/>
+                    <AiOutlineCloseBtn onClick={() => {handleCancel()}}/>
                 </TitleWrapper>
                 <Line />
                 <SlippageRowWrapper>
                     <p>Slippage:</p>
                     <SlippageInputWrapper>
-                    <SlippageInput type="number" min="0" max="100" step="1" value={props.slippage} onChange={props.handleSlippageChange}/>
+                    <SlippageInput
+                        type="number"
+                        min= {0}
+                        max= {100}
+                        value={localSlippage}
+                        onChange={(e) => {handleSlippageField(e)}}/>
                         <p>%</p>
                     </SlippageInputWrapper>
 
                 </SlippageRowWrapper>
                 <ButtonWrapper>
-                    <ApplyButton onClick={() => {}}>Apply</ApplyButton>
-                    <CloseButton onClick={() => {setSettingsModal(false)}}>Cancel</CloseButton>
+                    <ApplyButton onClick={() => {handleApply()}}>Apply</ApplyButton>
+                    <CloseButton onClick={() => {handleCancel()}}>Cancel</CloseButton>
                 </ButtonWrapper>
             </ModalBoxSwapSettings>
         </ModalContainer>

@@ -30,28 +30,31 @@ const Swap = (props) => {
 
     useEffect(() => {
 
-        let fieldOneBN
         // check to see if amount needs to be approved if field one is filled,
         // there is an active account and approved amount is available:
         if (fieldOne && active && approvedAmount) {
-            console.log("useEffect being performed")
-            const fieldOneBN = ethers.utils.parseUnits(fieldOne, "ether")
-            const approvedBN = ethers.BigNumber.from(approvedAmount)
-
-            console.log(fieldOneBN.toString())
-            console.log(approvedBN.toString())
-            if (fieldOneBN.gt(approvedBN)) {
-                console.log("approved amount is less than field one")
-                setShowApprovedBtn(true)
-            }
-
-            if (fieldOneBN.lt(approvedBN)){
-                console.log("approved amount is greater than field one")
-                setShowApprovedBtn(false)
-            }
+           checkIfApprovalNeeded()
         }
 
     },[fieldOne, active, approvedAmount])
+
+
+    const checkIfApprovalNeeded = () => {
+        const fieldOneBN = ethers.utils.parseUnits(fieldOne, "ether")
+        const approvedBN = ethers.BigNumber.from(approvedAmount)
+
+        console.log(fieldOneBN.toString())
+        console.log(approvedBN.toString())
+        if (fieldOneBN.gt(approvedBN)) {
+            console.log("approved amount is less than field one")
+            setShowApprovedBtn(true)
+        }
+
+        if (fieldOneBN.lt(approvedBN)){
+            console.log("approved amount is greater than field one")
+            setShowApprovedBtn(false)
+        }
+    }
 
 
     const handleApprove = async () => {

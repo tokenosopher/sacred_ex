@@ -52,26 +52,52 @@ async function main() {
 
     //get the exchange contract to deploy:
     const Exchange = await hre.ethers.getContractFactory("Exchange");
-    const exchange = await Exchange.deploy(generalPeaceToken.address);
+    const gepetoExchange = await Exchange.deploy(generalPeaceToken.address);
 
-    await exchange.deployed();
+    await gepetoExchange.deployed();
 
-    console.log("Exchange deployed to:", exchange.address);
+    console.log("GEPETO exchange deployed to:", gepetoExchange.address);
 
     //adding the generalpeacetoken exchange to the factory address:
-    await factory.manuallyAddExchange(generalPeaceToken.address, exchange.address)
+    await factory.manuallyAddExchange(generalPeaceToken.address, gepetoExchange.address)
 
     //approve 500 tokens for the exchange address:
-    await generalPeaceToken.approve(exchange.address, weiFromEther("500"))
+    await generalPeaceToken.approve(gepetoExchange.address, weiFromEther("500"))
 
     //adding the liquidity with 500 general peace tokens and 10 eth:
-    await exchange.addLiquidity(weiFromEther("500"), {value:weiFromEther("10")})
+    await gepetoExchange.addLiquidity(weiFromEther("500"), {value:weiFromEther("10")})
+
+    //get the Gratitude Coin address to deploy:
+    const GratitudeCoin = await hre.ethers.getContractFactory("GratitudeCoin");
+    const gratitudeCoin = await GratitudeCoin.deploy(weiFromEther("1000000"));
+
+    await gratitudeCoin.deployed();
+
+    console.log("GratitudeCoin deployed to:", gratitudeCoin.address);
+
+    //get the exchange contract to deploy:
+    const grtfulExchange = await Exchange.deploy(gratitudeCoin.address);
+
+    await grtfulExchange.deployed();
+
+    console.log("GRTFUL exchange deployed to:", grtfulExchange.address);
+
+    //adding the gratitudecoin exchange to the factory address:
+    await factory.manuallyAddExchange(gratitudeCoin.address, grtfulExchange.address)
+
+    //approve 500 tokens for the exchange address:
+    await gratitudeCoin.approve(grtfulExchange.address, weiFromEther("500"))
+
+    //adding the liquidity with 500 gratitude coins and 10 eth:
+    await grtfulExchange.addLiquidity(weiFromEther("500"), {value:weiFromEther("10")})
 
     //creating a json file with the addresses of the deployed contracts:
     const contractAddresses = {
         factoryAddress: factory.address,
         generalPeaceTokenAddress: generalPeaceToken.address,
-        exchangeAddress: exchange.address,
+        gepetoExchangeAddress: gepetoExchange.address,
+        gratitudeCoinAddress: gratitudeCoin.address,
+        grtfulExchangeAddress: grtfulExchange.address
     };
 
 

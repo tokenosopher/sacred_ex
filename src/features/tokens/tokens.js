@@ -29,7 +29,10 @@ export default tokens = [
         messageDescription: "Help to inspire gratitude and provide value to the coin by writing what you are grateful for when you trade it.",
         messagePlaceholderOne: "Name",
         messageConnector: "is grateful for",
-        messagePlaceholderTwo: "...something"
+        messagePlaceholderTwo: "...something",
+        address: contractAddresses.gratitudeCoinAddress,
+        abi: IERC20Sacred.abi,
+        exchangeAddress: contractAddresses.grtfulExchangeAddress
     },
 
     {
@@ -46,6 +49,6 @@ export default tokens = [
         messagePlaceholderTwo: "...something",
         address: contractAddresses.generalPeaceTokenAddress,
         abi: IERC20Sacred.abi,
-        exchangeAddress: contractAddresses.exchangeAddress
+        exchangeAddress: contractAddresses.gepetoExchangeAddress
     }
 ]

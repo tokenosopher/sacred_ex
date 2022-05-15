@@ -1,7 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
-    approved: ""
+    approved: "",
+    globalSlippage: 0.1
 }
 
 
@@ -11,10 +12,13 @@ const activeTokenNumbersSlice = createSlice({
     reducers: {
         setAllowance: (state, action) => {
             state.approved = action.payload;
+        },
+        setGlobalSlippage: (state, action) => {
+            state.globalSlippage = action.payload;
         }
     }
 })
 
-export const {setAllowance} = activeTokenNumbersSlice.actions;
+export const {setAllowance, setGlobalSlippage} = activeTokenNumbersSlice.actions;
 
 export default activeTokenNumbersSlice.reducer;

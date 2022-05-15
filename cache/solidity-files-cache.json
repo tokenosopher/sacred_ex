@@ -298,8 +298,8 @@
       ]
     },
     "C:\\code\\sacred_ex\\src\\contracts\\GeneralPeaceToken.sol": {
-      "lastModificationDate": 1652354150683,
-      "contentHash": "08f4fd0c3d41c139202ae4f52ee3d1df",
+      "lastModificationDate": 1652630048906,
+      "contentHash": "48b982bca56067f536d1eae47888cbde",
       "sourceName": "src/contracts/GeneralPeaceToken.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -440,6 +440,44 @@
       ],
       "artifacts": [
         "IERC20Sacred"
+      ]
+    },
+    "C:\\code\\sacred_ex\\src\\contracts\\GratitudeCoin.sol": {
+      "lastModificationDate": 1652631199190,
+      "contentHash": "5582d25e4e99d4a6cc51b026b08c5162",
+      "sourceName": "src/contracts/GratitudeCoin.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "./SacredCoin.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "GratitudeCoin"
       ]
     }
   }
