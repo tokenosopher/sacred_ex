@@ -128,20 +128,26 @@ const Swap = (props) => {
                 const tokenAmountScaled = etherFromWei(tokenAmount)
                 const tokenAmountRounded = Math.round(tokenAmountScaled * 100000000) / 100000000
 
-                setFieldOne(tokenAmountRounded)
+                setFieldOne(tokenAmountRounded.toString())
         }
             else if (tokenOne.value.symbol === 'MATIC' &&
                 tokenTwo.value.symbol !== 'MATIC' &&
                 fieldTwo
             ) {
+
                 const contract = new ethers.Contract(tokenTwo.value.exchangeAddress, Exchange.abi, library.getSigner())
                 const fieldTwoWei = weiFromEther(fieldTwo)
-                const ethAmount = await contract.getEthAmount(fieldTwoWei)
+
+                //get eth balance of exchange
+                const ethExchangeBalance = await library.getBalance(tokenTwo.value.exchangeAddress)
+                const tokenExchangeBalance = await contract.getReserve()
+
+                //formula for the token amount is eth exchange balance multiplied by fieldTwoWei, over the token exchange balance minus fieldTwoWei
+                let ethAmount = ethExchangeBalance.mul(fieldTwoWei).div(tokenExchangeBalance.sub(fieldTwoWei))
                 const ethAmountScaled = etherFromWei(ethAmount)
-                //round ethAmountScaled to 8 decimal places
                 const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
-                setFieldOne(ethAmountRounded)
-                console.log(ethAmountRounded.toString())
+
+                setFieldOne(ethAmountRounded.toString())
             }
         }
         if (active && activeField === "fieldTwo") {
