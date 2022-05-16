@@ -118,12 +118,17 @@ const Swap = (props) => {
             ) {
                 const contract = new ethers.Contract(tokenOne.value.exchangeAddress, Exchange.abi, library.getSigner())
                 const fieldTwoWei = weiFromEther(fieldTwo)
-                const tokenAmount = await contract.getTokenAmount(fieldTwoWei)
+
+                //get eth balance of exchange
+                const ethExchangeBalance = await library.getBalance(tokenOne.value.exchangeAddress)
+                const tokenExchangeBalance = await contract.getReserve()
+
+                //formula for the token amount is token exchange balance multiplied by fieldTwoWei, over the eth exchange balance minus fieldTwoWei
+                let tokenAmount = tokenExchangeBalance.mul(fieldTwoWei).div(ethExchangeBalance.sub(fieldTwoWei))
                 const tokenAmountScaled = etherFromWei(tokenAmount)
-                //round tokenAmountScaled to 8 decimal places
                 const tokenAmountRounded = Math.round(tokenAmountScaled * 100000000) / 100000000
+
                 setFieldOne(tokenAmountRounded)
-                console.log(tokenAmountRounded.toString())
         }
             else if (tokenOne.value.symbol === 'MATIC' &&
                 tokenTwo.value.symbol !== 'MATIC' &&
