@@ -29,8 +29,11 @@ const Swap = (props) => {
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
     const [showApprovedBtn, setShowApprovedBtn] = useState(false)
-    const [showNotification, setShowNotification] = useState(false)
-    const [notificationText, setNotificationText] = useState("")
+    const [showAccountWarning, setShowAccountWarning] = useState(false)
+    const [accountWarningText, setAccountWarningText] = useState("")
+    const [showBalanceWarning, setShowBalanceWarning] = useState(false)
+    const [balanceWarningText, setBalanceWarningText] = useState("")
+
 
     //sets the active field of the swap section, so that the useEffect triggered by changes in the other field
     // does not get triggered, causing an error
@@ -53,27 +56,33 @@ const Swap = (props) => {
         const balanceBN = ethers.BigNumber.from(balance)
 
         if (fieldOneBN.gt(balanceBN)) {
-            setNotificationText("Not enough balance for the transaction")
-            setShowNotification(true)
+            setAccountWarningText("Not enough balance for the transaction")
+            setShowAccountWarning(true)
         }
         else {
-            setShowNotification(false)
+            setShowAccountWarning(false)
         }
     }
 
 
     const checkIfApprovalNeeded = () => {
-        const fieldOneBN = weiFromEther(fieldOne.toString())
+        const fieldOneWei = weiFromEther(fieldOne.toString())
         const approvedBN = ethers.BigNumber.from(approvedAmount)
+        const balanceBN = ethers.BigNumber.from(balance)
 
-        console.log(fieldOneBN.toString())
+        console.log(fieldOneWei.toString())
         console.log(approvedBN.toString())
-        if (fieldOneBN.gt(approvedBN)) {
+
+        // if balance exists and the amount entered is less than what has been approved
+        if (balance && fieldOneWei.gt(approvedBN) && fieldOneWei.lte(balanceBN) && Number(fieldOne) !== 0) {
             console.log("approved amount is less than field one")
+            console.log(fieldOneWei.toString())
             setShowApprovedBtn(true)
         }
-
-        if (fieldOneBN.lte(approvedBN)){
+            //if balance exists and the amount entered is lower than what has already been approved
+            //or the amount entered is higher than the balance of the user
+            //or there is no amount entered:
+        else if (balance && (fieldOneWei.lte(approvedBN) || fieldOneWei.gt(balanceBN) || !fieldOneWei || Number(fieldOne) === 0)) {
             console.log("approved amount is greater than field one")
             setShowApprovedBtn(false)
         }
@@ -84,19 +93,19 @@ const Swap = (props) => {
         async function getAmount() {
             if (tokenOne.value.symbol !== 'MATIC' &&
                 tokenTwo.value.symbol === 'MATIC' &&
-                fieldOne
-            ) {
+                fieldOne && Number(fieldOne) !== 0)
+            {
                 // const tokenContract = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
                 // const balance = await tokenContract.balanceOf(account)
                 const fieldOneWei = weiFromEther(fieldOne)
 
                 //checking if field one is larger than the balance:
-                if (fieldOneWei.gt(balance)) {
-                    // setNotificationText("Not enough balance for the transaction")
-                    // setShowNotification(true)
+                if (balance && fieldOneWei.gt(balance)) {
+
                 }
 
                 else {
+                    setShowBalanceWarning(false)
                     const contract = new ethers.Contract(tokenOne.value.exchangeAddress, Exchange.abi, library.getSigner())
 
                     const ethAmount = await contract.getEthAmount(fieldOneWei)
@@ -110,8 +119,8 @@ const Swap = (props) => {
         }
             else if (tokenOne.value.symbol === 'MATIC' &&
                 tokenTwo.value.symbol !== 'MATIC' &&
-                fieldOne
-            ) {
+                fieldOne && Number(fieldOne) !== 0)
+            {
                 const contract = new ethers.Contract(tokenTwo.value.exchangeAddress, Exchange.abi, library.getSigner())
                 const fieldOneWei = weiFromEther(fieldOne)
                 const tokenAmount = await contract.getTokenAmount(fieldOneWei)
@@ -143,11 +152,14 @@ const Swap = (props) => {
                 const tokenExchangeBalance = await contract.getReserve()
 
                 //verify that the ethExchangeBalance is smaller than the fieldTwoWei
-                if (ethExchangeBalance.lt(fieldTwoWei)) {
-                    // setNotificationText("Not enough balance for the transaction")
-                    // setShowNotification(true)
+                if (ethExchangeBalance.lte(fieldTwoWei)) {
+                    setFieldOne("0")
+                    setBalanceWarningText("The exchange balance is insufficient")
+                    setShowBalanceWarning(true)
+
                 }
                 else {
+                    setShowBalanceWarning(false)
                     let tokenAmount = tokenExchangeBalance.mul(fieldTwoWei).div(ethExchangeBalance.sub(fieldTwoWei))
                     const tokenAmountScaled = etherFromWei(tokenAmount)
                     const tokenAmountRounded = Math.round(tokenAmountScaled * 100000000) / 100000000
@@ -184,15 +196,19 @@ const Swap = (props) => {
 
     }, [fieldTwo, active])
 
-
     const handleFieldOneChange = (event) => {
         setActiveField("fieldOne")
-        setFieldOne(event.target.value)
+        if (Number(event.target.value) >= 0) {
+            setFieldOne(event.target.value)
+        }
+
     }
 
     const handleFieldTwoChange = (event) => {
         setActiveField("fieldTwo")
-        setFieldTwo(event.target.value)
+        if (Number(event.target.value) >= 0){
+            setFieldTwo(event.target.value)
+        }
     }
 
     const handleApprove = async () => {
@@ -263,10 +279,17 @@ const Swap = (props) => {
 
             <ButtonOption onClick={() => swapOrConnectBtn()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
             {
-                showNotification &&
+                showAccountWarning &&
                 <NotificationWrapper>
                 <Exclamation/><
-                    p>{notificationText}</p>
+                    p>{accountWarningText}</p>
+                </NotificationWrapper>
+            }
+            {
+                showBalanceWarning &&
+                <NotificationWrapper>
+                    <Exclamation/><
+                    p>{balanceWarningText}</p>
                 </NotificationWrapper>
             }
 
@@ -296,9 +319,6 @@ const MiniHeader = styled.div`
 const HeaderText = styled.div`
   //up right down left
   margin: 10px 10px 0 10px;
-`
-
-const GearWrapper = styled(HeaderText)`
 `
 
 const GearIcon = styled(BsGear)`
