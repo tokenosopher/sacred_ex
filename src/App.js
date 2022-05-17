@@ -78,7 +78,10 @@ function App() {
         updateAllowance().catch(console.error)
     }
     else {
-        setAllowance("")
+        setAllowanceAndBalance({
+            approved: "",
+            balance: ""
+        })
     }
     }, [tokenOne, active])
 

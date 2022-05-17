@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import {BsGear} from 'react-icons/bs'
+import {BsExclamationCircle} from 'react-icons/bs'
 import {IoMdArrowDropdown} from 'react-icons/io'
 import {useWeb3React} from "@web3-react/core";
 import {useDispatch, useSelector} from "react-redux";
@@ -13,7 +14,7 @@ import {weiFromEther, etherFromWei} from "../../constants/utils";
 
 const Swap = (props) => {
 
-    const {active, library} = useWeb3React();
+    const {active, account, library} = useWeb3React();
 
     const [setConnectModal, setCoinModal, setSettingsModal] = props.functions
 
@@ -28,6 +29,8 @@ const Swap = (props) => {
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
     const [showApprovedBtn, setShowApprovedBtn] = useState(false)
+    const [showNotification, setShowNotification] = useState(false)
+    const [notificationText, setNotificationText] = useState("")
 
     //sets the active field of the swap section, so that the useEffect triggered by changes in the other field
     // does not get triggered, causing an error
@@ -38,7 +41,6 @@ const Swap = (props) => {
         // check to see if amount needs to be approved if field one is filled,
         // there is an active account, approved amount is available and the active field is field one:
         if (fieldOne && active && approvedAmount) {
-            console.log(typeof fieldOne)
             checkIfApprovalNeeded()
             checkIfBalanceIsSufficient()
         }
@@ -51,7 +53,11 @@ const Swap = (props) => {
         const balanceBN = ethers.BigNumber.from(balance)
 
         if (fieldOneBN.gt(balanceBN)) {
-            console.log("Not enough balance for the transaction")
+            setNotificationText("Not enough balance for the transaction")
+            setShowNotification(true)
+        }
+        else {
+            setShowNotification(false)
         }
     }
 
@@ -80,14 +86,27 @@ const Swap = (props) => {
                 tokenTwo.value.symbol === 'MATIC' &&
                 fieldOne
             ) {
-                const contract = new ethers.Contract(tokenOne.value.exchangeAddress, Exchange.abi, library.getSigner())
+                // const tokenContract = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
+                // const balance = await tokenContract.balanceOf(account)
                 const fieldOneWei = weiFromEther(fieldOne)
-                const ethAmount = await contract.getEthAmount(fieldOneWei)
-                const ethAmountScaled = etherFromWei(ethAmount)
-                //round ethAmountScaled to 8 decimal places
-                const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
-                setFieldTwo(ethAmountRounded)
-                console.log(ethAmountRounded.toString())
+
+                //checking if field one is larger than the balance:
+                if (fieldOneWei.gt(balance)) {
+                    // setNotificationText("Not enough balance for the transaction")
+                    // setShowNotification(true)
+                }
+
+                else {
+                    const contract = new ethers.Contract(tokenOne.value.exchangeAddress, Exchange.abi, library.getSigner())
+
+                    const ethAmount = await contract.getEthAmount(fieldOneWei)
+                    const ethAmountScaled = etherFromWei(ethAmount)
+                    //round ethAmountScaled to 8 decimal places
+                    const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
+                    setFieldTwo(ethAmountRounded)
+                    console.log(ethAmountRounded.toString())
+                }
+
         }
             else if (tokenOne.value.symbol === 'MATIC' &&
                 tokenTwo.value.symbol !== 'MATIC' &&
@@ -123,12 +142,21 @@ const Swap = (props) => {
                 const ethExchangeBalance = await library.getBalance(tokenOne.value.exchangeAddress)
                 const tokenExchangeBalance = await contract.getReserve()
 
-                //formula for the token amount is token exchange balance multiplied by fieldTwoWei, over the eth exchange balance minus fieldTwoWei
-                let tokenAmount = tokenExchangeBalance.mul(fieldTwoWei).div(ethExchangeBalance.sub(fieldTwoWei))
-                const tokenAmountScaled = etherFromWei(tokenAmount)
-                const tokenAmountRounded = Math.round(tokenAmountScaled * 100000000) / 100000000
+                //verify that the ethExchangeBalance is smaller than the fieldTwoWei
+                if (ethExchangeBalance.lt(fieldTwoWei)) {
+                    // setNotificationText("Not enough balance for the transaction")
+                    // setShowNotification(true)
+                }
+                else {
+                    let tokenAmount = tokenExchangeBalance.mul(fieldTwoWei).div(ethExchangeBalance.sub(fieldTwoWei))
+                    const tokenAmountScaled = etherFromWei(tokenAmount)
+                    const tokenAmountRounded = Math.round(tokenAmountScaled * 100000000) / 100000000
 
-                setFieldOne(tokenAmountRounded.toString())
+                    setFieldOne(tokenAmountRounded.toString())
+                }
+
+                //formula for the token amount is token exchange balance multiplied by fieldTwoWei, over the eth exchange balance minus fieldTwoWei
+
         }
             else if (tokenOne.value.symbol === 'MATIC' &&
                 tokenTwo.value.symbol !== 'MATIC' &&
@@ -232,7 +260,15 @@ const Swap = (props) => {
                     </SwapTwoButtonWrapper>
                 </InputWrapper>
             </SwapColumnTwo>
+
             <ButtonOption onClick={() => swapOrConnectBtn()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
+            {
+                showNotification &&
+                <NotificationWrapper>
+                <Exclamation/><
+                    p>{notificationText}</p>
+                </NotificationWrapper>
+            }
 
         </Container>
     )
@@ -245,18 +281,17 @@ const Container = styled.div`
   display: flex;
   //column:
   flex-direction: column;
-  height: 286px;
+  min-height: 286px;
   width: 480px;
-  justify-content: space-between;
+  //justify-content: space-between;
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
-  //flex space between:
-  //flex-wrap: space-between;
 `
 
 const MiniHeader = styled.div`
   display:flex;
   justify-content: space-between;
+  margin-bottom: 10px;
 `
 const HeaderText = styled.div`
   //up right down left
@@ -280,7 +315,9 @@ const GearIcon = styled(BsGear)`
 `
 
 
-const SwapColumnOne = styled.div``
+const SwapColumnOne = styled.div`
+margin-bottom: 10px;
+`
 
 const InputWrapper = styled.div`
   display:flex;
@@ -373,9 +410,13 @@ const DropDown = styled(IoMdArrowDropdown)`
 
 const InputFieldTwo = styled(InputFieldOne)``
 
-const SwapColumnTwo = styled.div``
+const SwapColumnTwo = styled.div`
+margin-bottom: 10px;
+`
 
 const SwapTwoButtonWrapper = styled(SwapOneButtonWrapper)``
+
+
 
 const ButtonOption = styled.div`
   width: 96%;
@@ -402,4 +443,20 @@ const ButtonOption = styled.div`
     color: white;
     background-color: #335273;
   }
+`
+
+const NotificationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: red;
+  margin-bottom: 10px;
+  //set text size to be smaller:
+  font-size: 0.9em;
+`
+
+const Exclamation = styled(BsExclamationCircle)`
+  margin-right: 5px;
+
+
 `

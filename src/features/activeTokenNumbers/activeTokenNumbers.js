@@ -3,7 +3,7 @@ import {createSlice} from "@reduxjs/toolkit";
 const initialState = {
     approved: "",
     balance: "",
-    globalSlippage: 0.1
+    globalSlippage: 0.1,
 }
 
 
