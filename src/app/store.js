@@ -4,6 +4,7 @@ import tokenTwoReducer from "../features/tokens/tokenTwoSlice";
 import tokenListReducer from '../features/tokens/tokenListSlice';
 import swapButtonReducer from "../features/swapModal/swapButton";
 import activeTokenNumbers from "../features/activeTokenNumbers/activeTokenNumbers";
+import messages from "../features/messages/messagesSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     tokenTwo: tokenTwoReducer,
     tokenList: tokenListReducer,
     swapButton: swapButtonReducer,
-    activeTokenNumbers: activeTokenNumbers
+    activeTokenNumbers: activeTokenNumbers,
+    messages: messages
   }
 });

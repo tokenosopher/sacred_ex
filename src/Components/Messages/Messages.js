@@ -4,23 +4,48 @@ import {BiCheckbox} from 'react-icons/bi';
 import {BiCheckboxChecked} from 'react-icons/bi';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {setName, setChecked, setMessage} from "../../features/messages/messagesSlice";
 
 const Guidelines = (props) => {
 
-    const [checked, setChecked] = useState(true);
+    // const [checked, setChecked] = useState(true);
 
     const [activeTokenAttributes]= props.functions
 
+    const dispatch = useDispatch();
+
+    const globalName = useSelector(state => state.messages.name);
+    const globalMessage = useSelector(state => state.messages.message);
+    const globalChecked = useSelector(state => state.messages.checkedBool);
+
+    const handleNameChange = (event) => {
+        dispatch(
+            setName(event.target.value)
+        )
+    };
+
+    const handleMessageChange = (event) => {
+        dispatch(
+            setMessage(event.target.value)
+        )
+    };
+
+    const handleCheckedChange = (value) => {
+        dispatch(
+            setChecked(value)
+        )
+    };
 
     return (
-        <Container checked={checked}>
+        <Container checked={globalChecked}>
             <TitleWrapper>
                 <CheckboxWrapper>
                     {
-                        checked ?
-                            <BiCheckboxChecked size={30} onClick={() => setChecked(false)}/>
+                        globalChecked ?
+                            <BiCheckboxChecked size={30} onClick={() => handleCheckedChange(false)}/>
                             :
-                            <BiCheckbox size={30} onClick={() => setChecked(true)}/>
+                            <BiCheckbox size={30} onClick={() => handleCheckedChange(true)}/>
                     }
                 </CheckboxWrapper>
                 <h3>{activeTokenAttributes && activeTokenAttributes.messageTitle}</h3>
@@ -31,12 +56,23 @@ const Guidelines = (props) => {
             <StatementWrapper>
                 <p>{activeTokenAttributes && activeTokenAttributes.messageDescription}</p>
             </StatementWrapper>
-            <InputsWrapper checked={checked}>
+            <InputsWrapper checked={globalChecked}>
                 <InputFirstRow>
-                    <InputName type="text" placeholder={activeTokenAttributes && activeTokenAttributes.messagePlaceholderOne}/>
+                    <InputName
+                        type="text"
+                        placeholder={activeTokenAttributes && activeTokenAttributes.messagePlaceholderOne}
+                        value={globalName}
+                        onChange={handleNameChange}
+                    />
                     <p>{activeTokenAttributes && activeTokenAttributes.messageConnector}</p>
                 </InputFirstRow>
-                <InputGratitudeObject type={"textarea"} rows={"5"} placeholder={activeTokenAttributes && activeTokenAttributes.messagePlaceholderTwo}/>
+                <InputGratitudeObject
+                    type={"textarea"}
+                    rows={"5"}
+                    placeholder={activeTokenAttributes && activeTokenAttributes.messagePlaceholderTwo}
+                    value={globalMessage}
+                    onChange={handleMessageChange}
+                />
             </InputsWrapper>
         </Container>
     )
@@ -53,7 +89,7 @@ const Container = styled.div`
   width: 480px;
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
-  //height: ${props => props.checked ? "350px" : "100px"};
+  //height: ${props => props.globalChecked ? "350px" : "100px"};
   overflow-y:hidden;
   transition: height 0.2s ease-in-out;
   
