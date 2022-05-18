@@ -160,14 +160,18 @@ const Swap = (props) => {
                 }
                 else {
                     setShowBalanceWarning(false)
-                    let tokenAmount = tokenExchangeBalance.mul(fieldTwoWei).div(ethExchangeBalance.sub(fieldTwoWei))
+                    //formula for the token amount is token exchange balance multiplied by fieldTwoWei, over the eth exchange balance minus fieldTwoWei
+                    //we also extract the 1% fee using the hundredBN and ninetyNineBN
+                    const hundredBN = ethers.BigNumber.from(100)
+                    const ninetyNineBN = ethers.BigNumber.from(99)
+                    let tokenAmount =
+                        hundredBN.mul(tokenExchangeBalance).mul(fieldTwoWei)
+                        .div(ninetyNineBN.mul(ethExchangeBalance.sub(fieldTwoWei)))
                     const tokenAmountScaled = etherFromWei(tokenAmount)
                     const tokenAmountRounded = Math.round(tokenAmountScaled * 100000000) / 100000000
 
                     setFieldOne(tokenAmountRounded.toString())
                 }
-
-                //formula for the token amount is token exchange balance multiplied by fieldTwoWei, over the eth exchange balance minus fieldTwoWei
 
         }
             else if (tokenOne.value.symbol === 'MATIC' &&
@@ -182,8 +186,13 @@ const Swap = (props) => {
                 const ethExchangeBalance = await library.getBalance(tokenTwo.value.exchangeAddress)
                 const tokenExchangeBalance = await contract.getReserve()
 
-                //formula for the token amount is eth exchange balance multiplied by fieldTwoWei, over the token exchange balance minus fieldTwoWei
-                let ethAmount = ethExchangeBalance.mul(fieldTwoWei).div(tokenExchangeBalance.sub(fieldTwoWei))
+                //formula for the eth amount is eth exchange balance multiplied by fieldTwoWei, over the token exchange balance minus fieldTwoWei
+                //we also extract the 1% fee using the hundredBN and ninetyNineBN
+                const hundredBN = ethers.BigNumber.from(100)
+                const ninetyNineBN = ethers.BigNumber.from(99)
+                let ethAmount =
+                    hundredBN.mul(ethExchangeBalance).mul(fieldTwoWei)
+                        .div(ninetyNineBN.mul(tokenExchangeBalance.sub(fieldTwoWei)))
                 const ethAmountScaled = etherFromWei(ethAmount)
                 const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
 

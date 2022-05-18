@@ -6,7 +6,7 @@ import Header from "./Components/Header/Header";
 import Swap from "./Components/Swap/Swap";
 import Footer from "./Components/Footer/Footer";
 import Guidelines from "./Components/Guidelines/Guidelines";
-import GratitudeMessage from "./Components/Messages/GratitudeMessage";
+import Messages from "./Components/Messages/Messages";
 import ConnectModal from "./Components/Modals/ConnectModal";
 import SelectCoinModal from "./Components/Modals/SelectCoinModal";
 import SwapSettingsModal from "./Components/Modals/SwapSettingsModal";
@@ -94,7 +94,7 @@ function App() {
         <Header functions={[connectModal, setConnectModal]}/>
         <Guidelines functions={[activeTokenAttributes]}/>
         <Swap functions={[setConnectModal, setCoinModal, setSettingsModal]}/>
-        <GratitudeMessage functions = {[activeTokenAttributes]}/>
+        <Messages functions = {[activeTokenAttributes]}/>
         <Footer/>
       </Main>
       </>
