@@ -1,5 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 
+const fs = require("fs");
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -9,6 +11,19 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     console.log(account.address);
   }
 });
+
+function mnemonic() {
+  try {
+    return fs.readFileSync("./mnemonic.txt").toString().trim();
+  } catch (e) {
+    if (defaultNetwork !== "localhost") {
+      console.log(
+          "☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`."
+      );
+    }
+  }
+  return "";
+}
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -24,4 +39,12 @@ module.exports = {
     cache: "./cache",
     artifacts: "./src/artifacts"
   },
+  networks: {
+    mumbai: {
+      url: `https://polygon-mumbai.infura.io/v3/fce3430e645d4091bd6be9e972e6045f`,
+      accounts: {
+        mnemonic: mnemonic(),
+      }
+    }
+  }
 };

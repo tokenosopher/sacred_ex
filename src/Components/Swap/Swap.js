@@ -270,7 +270,10 @@ const Swap = (props) => {
     const handleApprove = async () => {
         const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
         const allowanceEth = ethers.utils.parseUnits(fieldOne, "ether")
-        await token.approve(tokenOne.value.exchangeAddress, allowanceEth)
+        let txResult = await token.approve(tokenOne.value.exchangeAddress, allowanceEth)
+        await txResult.wait()
+        console.log(txResult)
+
         dispatch(
             setAllowance(allowanceEth.toString())
         )
@@ -295,10 +298,6 @@ const Swap = (props) => {
         )
     }
 
-    const handleSwap = () => {
-
-    }
-
     //takes the current values of field two and the slippage to calculate the minimum amount of return that the user
     //agrees with
     const calculateMinAmount = () => {
@@ -319,7 +318,10 @@ const Swap = (props) => {
             const tokensSoldBN = weiFromEther(fieldOne.toString())
             // const minAmountScaled = etherFromWei(minAmount)
 
-            await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
+            const txResult = await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
+
+            await txResult.wait()
+            console.log("done publishing on the chain")
         }
 
         if ((tokenOne.value.symbol === 'MATIC') &&
@@ -330,7 +332,12 @@ const Swap = (props) => {
             const maticSoldBN = weiFromEther(fieldOne.toString())
             // const minAmountScaled = etherFromWei(minAmount)
 
-            await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
+            let txResult = await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
+
+            await txResult.wait()
+
+
+            console.log("done publishing on the chain")
         }
 
     }

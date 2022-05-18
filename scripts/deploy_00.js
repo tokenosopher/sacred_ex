@@ -34,6 +34,8 @@ async function main() {
         return ethers.utils.formatEther(amount)
     }
 
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
     // We get the contract to deploy
     const Factory = await hre.ethers.getContractFactory("Factory");
     const factory = await Factory.deploy();
@@ -59,13 +61,21 @@ async function main() {
     console.log("GEPETO exchange deployed to:", gepetoExchange.address);
 
     //adding the generalpeacetoken exchange to the factory address:
-    await factory.manuallyAddExchange(generalPeaceToken.address, gepetoExchange.address)
+    const manuallyAddGEPETO = await factory.manuallyAddExchange(generalPeaceToken.address, gepetoExchange.address)
+    manuallyAddGEPETO.wait()
+    console.log("ManuallyAddGepeto done")
 
     //approve 500 tokens for the exchange address:
-    await generalPeaceToken.approve(gepetoExchange.address, weiFromEther("500"))
+    const approveGEPETO = await generalPeaceToken.approve(gepetoExchange.address, weiFromEther("500"))
+    approveGEPETO.wait()
+    console.log("approveGEPETO done")
+    await delay(10000)
 
     //adding the liquidity with 500 general peace tokens and 10 eth:
-    await gepetoExchange.addLiquidity(weiFromEther("500"), {value:weiFromEther("10")})
+    const addLiqduidityToGepetoExchange = await gepetoExchange.addLiquidity(weiFromEther("500"), {value:weiFromEther("0.1")})
+    addLiqduidityToGepetoExchange.wait()
+    console.log("addLiqduidityToGepetoExchange done")
+
 
     //get the Gratitude Coin address to deploy:
     const GratitudeCoin = await hre.ethers.getContractFactory("GratitudeCoin");
@@ -83,13 +93,21 @@ async function main() {
     console.log("GRTFUL exchange deployed to:", grtfulExchange.address);
 
     //adding the gratitudecoin exchange to the factory address:
-    await factory.manuallyAddExchange(gratitudeCoin.address, grtfulExchange.address)
+    const TxGrtfulExchange = await factory.manuallyAddExchange(gratitudeCoin.address, grtfulExchange.address)
+    TxGrtfulExchange.wait()
+    console.log("ManuallyAddGratitudeCoin done")
 
     //approve 500 tokens for the exchange address:
-    await gratitudeCoin.approve(grtfulExchange.address, weiFromEther("500"))
+    const TxGratitudeCoinApprove = await gratitudeCoin.approve(grtfulExchange.address, weiFromEther("500"))
+    TxGratitudeCoinApprove.wait()
+    console.log("TxGratitudeCoinApprove done")
+    await delay(10000)
 
     //adding the liquidity with 500 gratitude coins and 10 eth:
-    await grtfulExchange.addLiquidity(weiFromEther("500"), {value:weiFromEther("10")})
+    const TxGrtfulExchangeAddLiquidity = await grtfulExchange.addLiquidity(weiFromEther("500"), {value:weiFromEther("0.1")})
+    TxGrtfulExchangeAddLiquidity.wait()
+    console.log("addLiqduidityToGratitudeCoinExchange done")
+
 
     //creating a json file with the addresses of the deployed contracts:
     const contractAddresses = {
