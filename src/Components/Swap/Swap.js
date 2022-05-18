@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
-import {BsGear} from 'react-icons/bs'
-import {BsExclamationCircle} from 'react-icons/bs'
+import {BsExclamationCircle, BsGear} from 'react-icons/bs'
 import {IoMdArrowDropdown} from 'react-icons/io'
 import {useWeb3React} from "@web3-react/core";
 import {useDispatch, useSelector} from "react-redux";
@@ -10,7 +9,7 @@ import {CoinIcon} from "../Modals/SelectCoinModal";
 import {ethers} from "ethers";
 import {setAllowance} from "../../features/activeTokenNumbers/activeTokenNumbers";
 import Exchange from "../../artifacts/src/contracts/Exchange.sol/Exchange.json";
-import {weiFromEther, etherFromWei} from "../../constants/utils";
+import {etherFromWei, weiFromEther} from "../../constants/utils";
 
 const Swap = (props) => {
 
@@ -25,6 +24,7 @@ const Swap = (props) => {
     const tokenTwo = useSelector((state) => state.tokenTwo)
     const approvedAmount = useSelector((state) => state.activeTokenNumbers.approved)
     const balance = useSelector((state) => state.activeTokenNumbers.balance)
+    const slippage = useSelector((state) => state.activeTokenNumbers.globalSlippage)
 
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
@@ -33,6 +33,7 @@ const Swap = (props) => {
     const [accountWarningText, setAccountWarningText] = useState("")
     const [showBalanceWarning, setShowBalanceWarning] = useState(false)
     const [balanceWarningText, setBalanceWarningText] = useState("")
+    const [swapEnabled, setSwapEnabled] = useState(true)
 
 
     //sets the active field of the swap section, so that the useEffect triggered by changes in the other field
@@ -52,10 +53,19 @@ const Swap = (props) => {
 
     //check if fieldOne value is higher than balance:
     const checkIfBalanceIsSufficient = () => {
+
         const fieldOneBN = weiFromEther(fieldOne.toString())
         const balanceBN = ethers.BigNumber.from(balance)
 
-        if (fieldOneBN.gt(balanceBN)) {
+        console.log("field one is " + fieldOne.toString())
+        console.log("balance is " + etherFromWei(balance))
+
+        if (tokenOne.value.id === "1" && fieldOneBN.gt(balanceBN)) {
+            setAccountWarningText("Not enough balance for the transaction")
+            setShowAccountWarning(true)
+        }
+
+        else if (fieldOneBN.gt(balanceBN)) {
             setAccountWarningText("Not enough balance for the transaction")
             setShowAccountWarning(true)
         }
@@ -63,6 +73,25 @@ const Swap = (props) => {
             setShowAccountWarning(false)
         }
     }
+
+    //enables or disables the swap button based on various conditions:
+    useEffect(() => {
+        if (active &&
+            (showAccountWarning ||
+            showBalanceWarning ||
+            showApprovedBtn ||
+            Number(fieldOne) === 0 ||
+            Number(fieldTwo) === 0) ||
+            (tokenOne.value.id === tokenTwo.value.id) ||
+            ((tokenOne.value.id !== "1") && (tokenTwo.value.id !== "1"))
+        ) {
+            setSwapEnabled(false)
+        }
+        else {
+            console.log("it's true")
+            setSwapEnabled(true)
+        }
+    }, [showAccountWarning, showBalanceWarning, showApprovedBtn, tokenOne, tokenTwo])
 
 
     const checkIfApprovalNeeded = () => {
@@ -74,7 +103,13 @@ const Swap = (props) => {
         console.log(approvedBN.toString())
 
         // if balance exists and the amount entered is less than what has been approved
-        if (balance && fieldOneWei.gt(approvedBN) && fieldOneWei.lte(balanceBN) && Number(fieldOne) !== 0) {
+        if (balance &&
+            fieldOneWei.gt(approvedBN)
+            && fieldOneWei.lte(balanceBN) &&
+            Number(fieldOne) !== 0 &&
+            (tokenOne.value.id !== "1")
+
+        ) {
             console.log("approved amount is less than field one")
             console.log(fieldOneWei.toString())
             setShowApprovedBtn(true)
@@ -140,6 +175,7 @@ const Swap = (props) => {
     //sets the output in field one based on the value in field two:
     useEffect(() => {
         async function getAmount() {
+            //if field two is matic
             if (tokenOne.value.symbol !== 'MATIC' &&
                 tokenTwo.value.symbol === 'MATIC' &&
                 fieldTwo
@@ -174,11 +210,12 @@ const Swap = (props) => {
                 }
 
         }
+
+            //if FieldTwo is not matic:
             else if (tokenOne.value.symbol === 'MATIC' &&
                 tokenTwo.value.symbol !== 'MATIC' &&
                 fieldTwo
             ) {
-
                 const contract = new ethers.Contract(tokenTwo.value.exchangeAddress, Exchange.abi, library.getSigner())
                 const fieldTwoWei = weiFromEther(fieldTwo)
 
@@ -186,17 +223,27 @@ const Swap = (props) => {
                 const ethExchangeBalance = await library.getBalance(tokenTwo.value.exchangeAddress)
                 const tokenExchangeBalance = await contract.getReserve()
 
-                //formula for the eth amount is eth exchange balance multiplied by fieldTwoWei, over the token exchange balance minus fieldTwoWei
-                //we also extract the 1% fee using the hundredBN and ninetyNineBN
-                const hundredBN = ethers.BigNumber.from(100)
-                const ninetyNineBN = ethers.BigNumber.from(99)
-                let ethAmount =
-                    hundredBN.mul(ethExchangeBalance).mul(fieldTwoWei)
-                        .div(ninetyNineBN.mul(tokenExchangeBalance.sub(fieldTwoWei)))
-                const ethAmountScaled = etherFromWei(ethAmount)
-                const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
 
-                setFieldOne(ethAmountRounded.toString())
+                //verify that the tokenExchangeBalance is smaller thant the fieldTwoWei:
+                if (tokenExchangeBalance.lte(fieldTwoWei)) {
+                    setFieldOne("0")
+                    setBalanceWarningText("The exchange balance is insufficient")
+                    setShowBalanceWarning(true)
+                }
+                else {
+                    setShowBalanceWarning(false)
+                    //formula for the eth amount is eth exchange balance multiplied by fieldTwoWei, over the token exchange balance minus fieldTwoWei
+                    //we also extract the 1% fee using the hundredBN and ninetyNineBN
+                    const hundredBN = ethers.BigNumber.from(100)
+                    const ninetyNineBN = ethers.BigNumber.from(99)
+                    let ethAmount =
+                        hundredBN.mul(ethExchangeBalance).mul(fieldTwoWei)
+                            .div(ninetyNineBN.mul(tokenExchangeBalance.sub(fieldTwoWei)))
+                    const ethAmountScaled = etherFromWei(ethAmount)
+                    const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
+
+                    setFieldOne(ethAmountRounded.toString())
+                }
             }
         }
         if (active && activeField === "fieldTwo") {
@@ -230,18 +277,9 @@ const Swap = (props) => {
         setShowApprovedBtn(false)
     }
 
-    const swapOrConnectBtn = () => {
+    const swapOrConnectBtn = async () => {
         if (active) {
-            if (tokenOne.value.id === "1") {
-                console.log("Token one is matic")
-            }
-            else if (tokenOne.value.id === "2") {
-                console.log("Token one is GRTFUL")
-            }
-
-            else if (tokenOne.value.id === "3") {
-                console.log("Token one is GEPETO")
-            }
+            await performSwap()
         }
         else {
             setConnectModal(true)
@@ -256,6 +294,47 @@ const Swap = (props) => {
             )
         )
     }
+
+    const handleSwap = () => {
+
+    }
+
+    //takes the current values of field two and the slippage to calculate the minimum amount of return that the user
+    //agrees with
+    const calculateMinAmount = () => {
+        const fieldTwoWei = weiFromEther(fieldTwo.toString())
+        const slippageBN = weiFromEther(slippage.toString())
+
+        // calculate the minimum amount of return that the user agrees with
+        const slippageAmount = fieldTwoWei.mul(slippageBN).div(ethers.BigNumber.from(10).pow(ethers.BigNumber.from(20)))
+        return fieldTwoWei.sub(slippageAmount)
+    }
+
+    const performSwap = async () => {
+        if ((tokenOne.value.symbol !== 'MATIC') &&
+            (tokenTwo.value.symbol === 'MATIC')) {
+
+            const contract = new ethers.Contract(tokenOne.value.exchangeAddress, Exchange.abi, library.getSigner())
+            const minAmountMatic = calculateMinAmount()
+            const tokensSoldBN = weiFromEther(fieldOne.toString())
+            // const minAmountScaled = etherFromWei(minAmount)
+
+            await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
+        }
+
+        if ((tokenOne.value.symbol === 'MATIC') &&
+            (tokenTwo.value.symbol !== 'MATIC')) {
+
+            const contract = new ethers.Contract(tokenTwo.value.exchangeAddress, Exchange.abi, library.getSigner())
+            const minAmountToken = calculateMinAmount()
+            const maticSoldBN = weiFromEther(fieldOne.toString())
+            // const minAmountScaled = etherFromWei(minAmount)
+
+            await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
+        }
+
+    }
+
 
     return (
         <Container>
@@ -286,7 +365,7 @@ const Swap = (props) => {
                 </InputWrapper>
             </SwapColumnTwo>
 
-            <ButtonOption onClick={() => swapOrConnectBtn()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
+            <ButtonOption disabled={!swapEnabled} onClick={() => swapOrConnectBtn()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
             {
                 showAccountWarning &&
                 <NotificationWrapper>
@@ -447,7 +526,7 @@ const SwapTwoButtonWrapper = styled(SwapOneButtonWrapper)``
 
 
 
-const ButtonOption = styled.div`
+const ButtonOption = styled.button`
   width: 96%;
   display: flex;
   align-items: center;
@@ -460,17 +539,27 @@ const ButtonOption = styled.div`
   border-radius: 15px;
   border: 1px solid transparent;
   font-weight: bold;
-  cursor: pointer;
   user-select: none;
   transition: all 0.2s ease-in-out;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 16px;
 
-  &:hover {
-    border: 1px solid #4680d0;
+  &:enabled {
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid #4680d0;
+    }
+
+    &:active {
+      color: white;
+      background-color: #335273;
+    }
   }
 
-  &:active {
-    color: white;
-    background-color: #335273;
+  &:disabled {
+    background-color: rgba(23, 42, 66, 0.3);
+    color: rgba(70, 128, 208, 0.3);
   }
 `
 

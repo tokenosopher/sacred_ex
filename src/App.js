@@ -19,6 +19,7 @@ import {
     setAllowance,
     setAllowanceAndBalance
 } from "./features/activeTokenNumbers/activeTokenNumbers";
+import {etherFromWei} from "./constants/utils";
 
 
 function App() {
@@ -62,19 +63,38 @@ function App() {
     //useEffect that updates the allowance and the user balance for the token in redux whenever token one changes, or whenever the user logs in:
     useEffect(() => {
         async function updateAllowance() {
-            const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
-            const tokenAllowance = await token.allowance(account, tokenOne.value.exchangeAddress)
-            const balance = await token.balanceOf(account)
+            //if the tokenOne is MATIC
+            if (tokenOne.value.id === "1") {
+                //check the balance of the user:
+                const balance = await library.getBalance(account);
+                console.log(etherFromWei(balance.toString()))
 
-            dispatch(
-                setAllowanceAndBalance({
+                dispatch(
+                    setAllowanceAndBalance({
+                        approved: "0",
+                        balance: balance.toString()
+                    })
+                )
+            }
+
+            //if tokenOne is a token:
+            else {
+                const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
+                const tokenAllowance = await token.allowance(account, tokenOne.value.exchangeAddress)
+                const balance = await token.balanceOf(account)
+
+                dispatch(
+                    setAllowanceAndBalance({
                         approved: tokenAllowance.toString(),
                         balance: balance.toString()
                     })
-            )
+                )
+            }
+
+
         }
 
-    if (tokenOne.value.id !== "1" && active) {
+    if (active) {
         updateAllowance().catch(console.error)
     }
     else {
