@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import {BiCheckbox} from 'react-icons/bi';
 import {BiCheckboxChecked} from 'react-icons/bi';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import {useState} from "react";
+import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setName, setChecked, setMessage} from "../../features/messages/messagesSlice";
+import {setName, setChecked, setMessage, setMessageWarning} from "../../features/messages/messagesSlice";
 
 const Guidelines = (props) => {
 
@@ -18,6 +18,11 @@ const Guidelines = (props) => {
     const globalName = useSelector(state => state.messages.name);
     const globalMessage = useSelector(state => state.messages.message);
     const globalChecked = useSelector(state => state.messages.checkedBool);
+    const messageWarning = useSelector(state => state.messages.messageWarning);
+
+    const handleMessageWarning = () => {
+        dispatch(setMessageWarning(messageWarning));
+    }
 
     const handleNameChange = (event) => {
         dispatch(
@@ -36,6 +41,15 @@ const Guidelines = (props) => {
             setChecked(value)
         )
     };
+
+    useEffect(() => {
+        if (globalName === '' || globalMessage === '') {
+            handleMessageWarning(false);
+        } else {
+            handleMessageWarning(true);
+        }
+    }, [globalName, globalMessage]);
+
 
     return (
         <Container checked={globalChecked}>

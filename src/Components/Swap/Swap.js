@@ -25,6 +25,10 @@ const Swap = (props) => {
     const approvedAmount = useSelector((state) => state.activeTokenNumbers.approved)
     const balance = useSelector((state) => state.activeTokenNumbers.balance)
     const slippage = useSelector((state) => state.activeTokenNumbers.globalSlippage)
+    const name = useSelector((state) => state.messages.name)
+    const message = useSelector((state) => state.messages.message)
+    const checkedBool = useSelector((state) => state.messages.checkedBool)
+    const messageWarning = useSelector((state) => state.messages.messageWarning)
 
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
@@ -49,7 +53,7 @@ const Swap = (props) => {
             checkIfBalanceIsSufficient()
         }
 
-    },[fieldOne, active, approvedAmount])
+    },[fieldOne, balance, active, approvedAmount])
 
     //check if fieldOne value is higher than balance:
     const checkIfBalanceIsSufficient = () => {
@@ -110,15 +114,12 @@ const Swap = (props) => {
             (tokenOne.value.id !== "1")
 
         ) {
-            console.log("approved amount is less than field one")
-            console.log(fieldOneWei.toString())
             setShowApprovedBtn(true)
         }
             //if balance exists and the amount entered is lower than what has already been approved
             //or the amount entered is higher than the balance of the user
             //or there is no amount entered:
         else if (balance && (fieldOneWei.lte(approvedBN) || fieldOneWei.gt(balanceBN) || !fieldOneWei || Number(fieldOne) === 0)) {
-            console.log("approved amount is greater than field one")
             setShowApprovedBtn(false)
         }
     }
@@ -147,8 +148,7 @@ const Swap = (props) => {
                     const ethAmountScaled = etherFromWei(ethAmount)
                     //round ethAmountScaled to 8 decimal places
                     const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
-                    setFieldTwo(ethAmountRounded)
-                    console.log(ethAmountRounded.toString())
+                    setFieldTwo(ethAmountRounded.toString())
                 }
 
         }
@@ -162,8 +162,7 @@ const Swap = (props) => {
                 const tokenAmountScaled = etherFromWei(tokenAmount)
                 //round tokenAmountScaled to 8 decimal places
                 const tokenAmountRounded = Math.round(tokenAmountScaled * 100000000) / 100000000
-                setFieldTwo(tokenAmountRounded)
-                console.log(tokenAmountRounded.toString())
+                setFieldTwo(tokenAmountRounded.toString())
             }
         }
         if (active && activeField === "fieldOne") {
@@ -309,6 +308,27 @@ const Swap = (props) => {
         return fieldTwoWei.sub(slippageAmount)
     }
 
+    // a function that sends an HTTP requestwith the variables name and message
+    const sendMessage = async (coin) => {
+        const url = "https://dev--sacredextwitter.sacredcoinprotocol.autocode.gg/"
+        const data = {
+            name: name,
+            message: message,
+            password: process.env.REACT_APP_AUTOCODE_PASS,
+            coin: coin
+        }
+        const response = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const json = await response.json()
+        console.log(json)
+    }
+
+
     const performSwap = async () => {
         if ((tokenOne.value.symbol !== 'MATIC') &&
             (tokenTwo.value.symbol === 'MATIC')) {
@@ -318,10 +338,20 @@ const Swap = (props) => {
             const tokensSoldBN = weiFromEther(fieldOne.toString())
             // const minAmountScaled = etherFromWei(minAmount)
 
-            const txResult = await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
+            try {
+                const txResult = await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
+                await txResult.wait()
+                //send message if the checkmark has been selected:
+                checkedBool && await sendMessage(tokenOne.value.symbol)
+            } catch (error) {
+                console.log(error)
+            }
 
-            await txResult.wait()
+
+
+
             console.log("done publishing on the chain")
+
         }
 
         if ((tokenOne.value.symbol === 'MATIC') &&
@@ -330,13 +360,17 @@ const Swap = (props) => {
             const contract = new ethers.Contract(tokenTwo.value.exchangeAddress, Exchange.abi, library.getSigner())
             const minAmountToken = calculateMinAmount()
             const maticSoldBN = weiFromEther(fieldOne.toString())
-            // const minAmountScaled = etherFromWei(minAmount)
-
-            let txResult = await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
-
-            await txResult.wait()
 
 
+            try {
+                const txResult = await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
+                await txResult.wait()
+                //send message if the checkmark has been selected:
+                checkedBool && await sendMessage(tokenTwo.value.symbol)
+            }
+            catch (error) {
+                console.log(error)
+            }
             console.log("done publishing on the chain")
         }
 
