@@ -30,7 +30,6 @@ const Swap = (props) => {
     const message = useSelector((state) => state.messages.message)
     const checkedBool = useSelector((state) => state.messages.checkedBool)
     const messageWarning = useSelector((state) => state.messages.messageWarning)
-    const calculateMessageWarning = useSelector((state) => state.messages.calculateMessageWarning)
 
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
@@ -98,16 +97,13 @@ const Swap = (props) => {
             console.log("it's true")
             setSwapEnabled(true)
         }
-    }, [showAccountWarning, showBalanceWarning, showApprovedBtn, messageWarning, tokenOne, tokenTwo])
+    }, [showAccountWarning, showBalanceWarning, showApprovedBtn, messageWarning, tokenOne, tokenTwo, active])
 
 
     const checkIfApprovalNeeded = () => {
         const fieldOneWei = weiFromEther(fieldOne.toString())
         const approvedBN = ethers.BigNumber.from(approvedAmount)
         const balanceBN = ethers.BigNumber.from(balance)
-
-        console.log(fieldOneWei.toString())
-        console.log(approvedBN.toString())
 
         // if balance exists and the amount entered is less than what has been approved
         if (balance &&
