@@ -10,6 +10,7 @@ import {ethers} from "ethers";
 import {setAllowance} from "../../features/activeTokenNumbers/activeTokenNumbers";
 import Exchange from "../../artifacts/src/contracts/Exchange.sol/Exchange.json";
 import {etherFromWei, weiFromEther} from "../../constants/utils";
+import {setCalculateMessageWarning, setName, setMessage} from "../../features/messages/messagesSlice";
 
 const Swap = (props) => {
 
@@ -29,6 +30,7 @@ const Swap = (props) => {
     const message = useSelector((state) => state.messages.message)
     const checkedBool = useSelector((state) => state.messages.checkedBool)
     const messageWarning = useSelector((state) => state.messages.messageWarning)
+    const calculateMessageWarning = useSelector((state) => state.messages.calculateMessageWarning)
 
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
@@ -84,6 +86,7 @@ const Swap = (props) => {
             (showAccountWarning ||
             showBalanceWarning ||
             showApprovedBtn ||
+            messageWarning ||
             Number(fieldOne) === 0 ||
             Number(fieldTwo) === 0) ||
             (tokenOne.value.id === tokenTwo.value.id) ||
@@ -95,7 +98,7 @@ const Swap = (props) => {
             console.log("it's true")
             setSwapEnabled(true)
         }
-    }, [showAccountWarning, showBalanceWarning, showApprovedBtn, tokenOne, tokenTwo])
+    }, [showAccountWarning, showBalanceWarning, showApprovedBtn, messageWarning, tokenOne, tokenTwo])
 
 
     const checkIfApprovalNeeded = () => {
@@ -240,7 +243,6 @@ const Swap = (props) => {
                             .div(ninetyNineBN.mul(tokenExchangeBalance.sub(fieldTwoWei)))
                     const ethAmountScaled = etherFromWei(ethAmount)
                     const ethAmountRounded = Math.round(ethAmountScaled * 100000000) / 100000000
-
                     setFieldOne(ethAmountRounded.toString())
                 }
             }
@@ -328,6 +330,26 @@ const Swap = (props) => {
         console.log(json)
     }
 
+    const checkMessageLength = () => {
+        if ((name === '') || (message === '')) {
+            dispatch(
+                setCalculateMessageWarning(true)
+            )
+            return false
+        }
+        else {
+            return true
+        }
+    }
+
+    const clearValues = () => {
+        dispatch(setCalculateMessageWarning(false))
+        setFieldOne("")
+        setFieldTwo("")
+        dispatch(setName(""))
+        dispatch(setMessage(""))
+    }
+
 
     const performSwap = async () => {
         if ((tokenOne.value.symbol !== 'MATIC') &&
@@ -342,13 +364,11 @@ const Swap = (props) => {
                 const txResult = await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
                 await txResult.wait()
                 //send message if the checkmark has been selected:
-                checkedBool && await sendMessage(tokenOne.value.symbol)
+                checkedBool && checkMessageLength() && await sendMessage(tokenOne.value.symbol)
+                clearValues()
             } catch (error) {
                 console.log(error)
             }
-
-
-
 
             console.log("done publishing on the chain")
 
@@ -363,10 +383,19 @@ const Swap = (props) => {
 
 
             try {
-                const txResult = await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
-                await txResult.wait()
-                //send message if the checkmark has been selected:
-                checkedBool && await sendMessage(tokenTwo.value.symbol)
+                if (!checkedBool) {
+                    const txResult = await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
+                    await txResult.wait()
+                    clearValues()
+                }
+
+                //checking if the message is not empty
+                else if (checkMessageLength()){
+                    const txResult = await contract.ethToTokenSwapSacredOne(minAmountToken, name, message, {value: maticSoldBN})
+                    await txResult.wait()
+                    await sendMessage(tokenTwo.value.symbol)
+                    clearValues()
+                }
             }
             catch (error) {
                 console.log(error)
@@ -419,6 +448,12 @@ const Swap = (props) => {
                 <NotificationWrapper>
                     <Exclamation/><
                     p>{balanceWarningText}</p>
+                </NotificationWrapper>
+            }
+            {messageWarning &&
+                <NotificationWrapper>
+                    <Exclamation/>
+                    <p>{"You need to fill in the message."}</p>
                 </NotificationWrapper>
             }
 

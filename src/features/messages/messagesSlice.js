@@ -4,7 +4,8 @@ const initialState = {
     name: "",
     message: "",
     checkedBool: true,
-    messageWarning: false
+    messageWarning: false,
+    calculateMessageWarning: false,
 }
 
 const messagesSlice = createSlice({
@@ -22,10 +23,13 @@ const messagesSlice = createSlice({
         },
         setMessageWarning: (state, action) => {
             state.messageWarning = action.payload;
-        }
+        },
+        setCalculateMessageWarning: (state, action) => {
+            state.calculateMessageWarning = action.payload;
+        },
     }
 });
 
-export const {setName, setMessage, setChecked, setMessageWarning} = messagesSlice.actions;
+export const {setName, setMessage, setChecked, setMessageWarning, setCalculateMessageWarning} = messagesSlice.actions;
 
 export default messagesSlice.reducer;

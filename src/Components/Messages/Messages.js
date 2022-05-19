@@ -19,9 +19,10 @@ const Guidelines = (props) => {
     const globalMessage = useSelector(state => state.messages.message);
     const globalChecked = useSelector(state => state.messages.checkedBool);
     const messageWarning = useSelector(state => state.messages.messageWarning);
+    const calculateMessageWarning = useSelector(state => state.messages.calculateMessageWarning);
 
-    const handleMessageWarning = () => {
-        dispatch(setMessageWarning(messageWarning));
+    const handleMessageWarning = (bool) => {
+        dispatch(setMessageWarning(bool));
     }
 
     const handleNameChange = (event) => {
@@ -43,12 +44,15 @@ const Guidelines = (props) => {
     };
 
     useEffect(() => {
-        if (globalName === '' || globalMessage === '') {
-            handleMessageWarning(false);
-        } else {
+        //if calculateMessage Warning is true, and either global message or global name is empty, then set messageWarning to true
+        if (calculateMessageWarning &&
+            globalChecked &&
+            (globalMessage === '' || globalName === '')) {
             handleMessageWarning(true);
+        } else {
+            handleMessageWarning(false);
         }
-    }, [globalName, globalMessage]);
+    }, [globalName, globalMessage, calculateMessageWarning]);
 
 
     return (
