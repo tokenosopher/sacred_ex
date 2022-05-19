@@ -1,15 +1,34 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import sacred_logo from '../../assets/images/sacred_logo.png'
 import {useWeb3React} from "@web3-react/core";
 import ConnectModal from "../Modals/ConnectModal";
 import {truncateAddress} from "../../constants/utils";
+import { useLocation } from 'react-router-dom';
+import {useEffect} from "react";
+
+import { Link } from 'react-router-dom';
 
 const Header = (props) => {
 
     const [connectModal, setConnectModal] = props.functions;
+    const [activeButton, setActiveButton] = useState("");
 
     const { active, account, library } = useWeb3React();
+
+
+    let location = useLocation();
+
+    useEffect(() => {
+        if (location.pathname === "/") {
+            setActiveButton("swap");
+        }
+        else if (location.pathname === "/about") {
+            setActiveButton("about");
+        }
+    }, [location])
+
+
 
 
     const onClickConnectWalletButton = () => {
@@ -42,10 +61,8 @@ const Header = (props) => {
         <Nav>
             <Logo src={sacred_logo} />
             <MidMenu>
-                <li>
-                    <a href={"#"} > Swap</a>
-                    <a href={"#"} > Pool</a>
-                </li>
+                    <ButtonSwap activeButton={activeButton} to="/">Swap</ButtonSwap>
+                    <ButtonAbout activeButton={activeButton} to="/about">About </ButtonAbout>
             </MidMenu>
             <RightMenu>
                 <PolygonButton> Polygon</PolygonButton>
@@ -75,21 +92,26 @@ const Logo = styled.img`
 `
 
 const MidMenu = styled.div`
-  
-  li {
-    list-style-type: none;
-  }
-  
+  display: flex;
+  margin-left: 10vw;
+  background-color: #172a42;
+  color: #457fcf;
+  //padding: 5px 10px;
+  border-radius: 20px;
+  height: 30px;
+  align-items: center;
+
   //create space between the a tags:
   a {
-    margin-right: 20px;
+    padding: 0 40px;
     //remove underline:
     text-decoration: none;
-    color: white;
-    //remove the dot from the a tag
+    color: #457fcf;
+    font-weight: bold;
+    height: 30px;
   }`
 
-const RightMenu = styled(MidMenu)`
+const RightMenu = styled.div`
     
 `
 
@@ -133,7 +155,49 @@ const ConnectWalletButton = styled(PolygonButton)`
 
 `
 const ThreeDotsButton = styled(PolygonButton)`
-
   width: 30px;
   margin-right: 20px;
   `
+
+const ButtonSwap = styled(Link)`
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  //padding: 5px 10px;
+  border-radius: 30px;
+  border: ${props => (props.activeButton === "swap") ?  "1px solid #4680d0" : "1px solid transparent"};
+  background-color: ${props => (props.activeButton === "swap") ?  "rgba(0,0,0,0.5)" : ""};;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    border: 1px solid #4680d0;
+    background-color: rgba(0,0,0,0.5);
+  }
+
+  &:active {
+    color: white;
+    background-color: #335273;
+  }
+`
+
+const ButtonAbout = styled(Link)`
+
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  //padding: 5px 10px;
+  border-radius: 30px;
+  border: ${props => (props.activeButton === "about") ?  "1px solid #4680d0" : "1px solid transparent"};
+  transition: all 0.2s ease-in-out;
+  background-color: ${props => (props.activeButton === "about") ?  "rgba(0,0,0,0.5)" : ""};;
+  &:hover {
+    border: 1px solid #4680d0;
+    background-color: rgba(0,0,0,0.5);
+  }
+
+  &:active {
+    color: white;
+    background-color: #335273;
+  }
+    
+    
+`

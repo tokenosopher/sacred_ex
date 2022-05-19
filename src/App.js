@@ -20,6 +20,8 @@ import {
     setAllowanceAndBalance
 } from "./features/activeTokenNumbers/activeTokenNumbers";
 import {etherFromWei} from "./constants/utils";
+import {Route, Routes} from "react-router-dom";
+import About from "./Components/About/About";
 
 
 function App() {
@@ -112,10 +114,14 @@ function App() {
       <SwapSettingsModal functions={[settingsModal, setSettingsModal]}/>
       <Main className="App">
         <Header functions={[connectModal, setConnectModal]}/>
-        <Guidelines functions={[activeTokenAttributes]}/>
-        <Swap functions={[setConnectModal, setCoinModal, setSettingsModal]}/>
-        <Messages functions = {[activeTokenAttributes]}/>
-        <Footer/>
+          <Routes>
+              <Route path="/" element={<><Guidelines functions={[activeTokenAttributes]}/>
+                  <Swap functions={[setConnectModal, setCoinModal, setSettingsModal]}/>
+                  <Messages functions = {[activeTokenAttributes]}/></>}/>
+              <Route path={"/about"} element={<About/>}/>
+          </Routes>
+
+        {/*<Footer/>*/}
       </Main>
       </>
   );
@@ -133,6 +139,7 @@ const Main = styled.main`
   >*  {
     margin-bottom: 10px;
   }
+  padding-bottom: 40px;
 `
 
 
