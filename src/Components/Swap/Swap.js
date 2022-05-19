@@ -473,6 +473,12 @@ const Container = styled.div`
   //justify-content: space-between;
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
+  @media (max-width: 495px) {
+    min-width: 350px;
+    width: 95%;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
 `
 
 const MiniHeader = styled.div`

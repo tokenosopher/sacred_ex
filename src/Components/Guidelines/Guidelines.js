@@ -55,6 +55,12 @@ const Container = styled.div`
   width: 480px;
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
+  
+  //media query for mobile:
+  @media (max-width: 495px) {
+    min-width: 350px;
+    width: 95%;
+  }
 `;
 
 const GuidelineTitle = styled.div`

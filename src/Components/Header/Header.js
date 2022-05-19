@@ -2,12 +2,9 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import sacred_logo from '../../assets/images/sacred_logo.png'
 import {useWeb3React} from "@web3-react/core";
-import ConnectModal from "../Modals/ConnectModal";
 import {truncateAddress} from "../../constants/utils";
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import {useEffect} from "react";
-
-import { Link } from 'react-router-dom';
 
 const Header = (props) => {
 
@@ -61,13 +58,18 @@ const Header = (props) => {
         <Nav>
             <Logo src={sacred_logo} />
             <MidMenu>
-                    <ButtonSwap activeButton={activeButton} to="/">Swap</ButtonSwap>
-                    <ButtonAbout activeButton={activeButton} to="/about">About </ButtonAbout>
+                    <ButtonSwap $activeButton={activeButton} to="/">Swap</ButtonSwap>
+                    <ButtonAbout $activeButton={activeButton} to="/about">About </ButtonAbout>
             </MidMenu>
             <RightMenu>
-                <PolygonButton> Polygon</PolygonButton>
+                <PolygonWrapper>
+                <PolygonButton> Polygon Testnet </PolygonButton>
+                    <PolygonPopup>Only testnet during beta testing</PolygonPopup>
+                </PolygonWrapper>
+                <ConnectWrapper>
                 <ConnectWalletButton onClick={() => onClickConnectWalletButton() }> {active ? setAddressValue() : 'Connect Wallet'}  </ConnectWalletButton>
-                <ThreeDotsButton>...</ThreeDotsButton>
+                </ConnectWrapper>
+                {/*<ThreeDotsButton>...</ThreeDotsButton>*/}
             </RightMenu>
         </Nav>
     </>
@@ -112,26 +114,52 @@ const MidMenu = styled.div`
   }`
 
 const RightMenu = styled.div`
+    display: flex;
+    align-items: center;
+    * {
+      margin-right: 10px;
+    }
     
 `
+const PolygonPopup = styled.div`
+  position: absolute;
+  top: 50px;
+  right: -10px;
+  background-color: rgba(31, 39, 55, 0.69);
+  color: rgba(219, 228, 236, 0.58);
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: all 250ms;
+  width: 140px;
+  font-size: 0.8rem;
+  opacity: 0;
+  cursor: pointer;
+  font-weight: bold;
+`
 
-const PolygonButton = styled.button`
-  background-color: rgba(0,0,0,0.5);
-  border-radius: 10px;
-  width: 70px;
+const PolygonButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  //border-radius: 10px;
+  //width: 70px;
+  height: 30px;
+  user-select: none;
+  width: 130px;
+  background-color: rgba(23, 42, 66, 0.47);
+  color: rgba(70, 128, 208, 0.55);
+  border-radius: 15px;
+  font-weight: bold;
+`
+
+
+
+const ConnectWalletButton = styled.button`
+  
   height:30px;
-  color: white;
   cursor: pointer;
   user-select: none;
-  //transition:
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    background-color: rgba(252, 252, 252, 0.25);
-    border : 1px solid white;
-  }
-`
-const ConnectWalletButton = styled(PolygonButton)`
   width: 130px;
 
   background-color: #172a42;
@@ -154,7 +182,7 @@ const ConnectWalletButton = styled(PolygonButton)`
 
 
 `
-const ThreeDotsButton = styled(PolygonButton)`
+const ThreeDotsButton = styled.button`
   width: 30px;
   margin-right: 20px;
   `
@@ -165,8 +193,8 @@ const ButtonSwap = styled(Link)`
   text-decoration: none;
   //padding: 5px 10px;
   border-radius: 30px;
-  border: ${props => (props.activeButton === "swap") ?  "1px solid #4680d0" : "1px solid transparent"};
-  background-color: ${props => (props.activeButton === "swap") ?  "rgba(0,0,0,0.5)" : ""};;
+  border: ${props => (props.$activeButton === "swap") ?  "1px solid #4680d0" : "1px solid transparent"};
+  background-color: ${props => (props.$activeButton === "swap") ?  "rgba(0,0,0,0.5)" : ""};;
   transition: all 0.2s ease-in-out;
   &:hover {
     border: 1px solid #4680d0;
@@ -186,9 +214,9 @@ const ButtonAbout = styled(Link)`
   text-decoration: none;
   //padding: 5px 10px;
   border-radius: 30px;
-  border: ${props => (props.activeButton === "about") ?  "1px solid #4680d0" : "1px solid transparent"};
+  border: ${props => (props.$activeButton === "about") ?  "1px solid #4680d0" : "1px solid transparent"};
   transition: all 0.2s ease-in-out;
-  background-color: ${props => (props.activeButton === "about") ?  "rgba(0,0,0,0.5)" : ""};;
+  background-color: ${props => (props.$activeButton === "about") ?  "rgba(0,0,0,0.5)" : ""};;
   &:hover {
     border: 1px solid #4680d0;
     background-color: rgba(0,0,0,0.5);
@@ -198,6 +226,19 @@ const ButtonAbout = styled(Link)`
     color: white;
     background-color: #335273;
   }
-    
-    
 `
+
+const PolygonWrapper = styled.div`
+    position: relative;
+
+  &:hover {
+    ${PolygonPopup} {
+      opacity: 1;
+      transition-duration: 1s;
+    }
+  }
+`
+
+
+
+const ConnectWrapper = styled.div``

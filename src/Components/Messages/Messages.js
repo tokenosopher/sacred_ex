@@ -110,6 +110,13 @@ const Container = styled.div`
   //height: ${props => props.globalChecked ? "350px" : "100px"};
   overflow-y:hidden;
   transition: height 0.2s ease-in-out;
+
+  @media (max-width: 495px) {
+    min-width: 350px;
+    width: 95%;
+    margin-top: 0px;
+    margin-bottom: 10px;
+  }
   
 `;
 
@@ -186,8 +193,14 @@ const InputGratitudeObject = styled.textarea`
   font-size: 15px;
   padding-left: 10px;
   padding-top:10px;
-  max-width: 440px;
   max-height: 100px;
+
+  @media (max-width: 495px) {
+    min-width: 350px;
+    width: 95%;
+    margin-top: 0px;
+    margin-bottom: 10px;
+  }
 
   transition: border 0.2s ease-in-out;
 
