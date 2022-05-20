@@ -1,6 +1,5 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter} from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { Web3ReactProvider } from '@web3-react/core'

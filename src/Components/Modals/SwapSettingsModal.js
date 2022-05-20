@@ -4,7 +4,7 @@ import {ModalContainer, ModalBox, TitleWrapper, ModalTitle, AiOutlineCloseBtn, B
 import {Line} from "./SelectCoinModal";
 import {useDispatch, useSelector} from "react-redux";
 import {setGlobalSlippage} from "../../features/activeTokenNumbers/activeTokenNumbers";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 const SwapSettingsModal = (props) => {
     const [settingsModal, setSettingsModal] = props.functions

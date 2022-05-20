@@ -8,10 +8,10 @@ import {useEffect} from "react";
 
 const Header = (props) => {
 
-    const [connectModal, setConnectModal] = props.functions;
+    const [setConnectModal] = props.functions;
     const [activeButton, setActiveButton] = useState("");
 
-    const { active, account, library } = useWeb3React();
+    const { active, account, deactivate } = useWeb3React();
 
 
     let location = useLocation();
@@ -37,42 +37,36 @@ const Header = (props) => {
         }
     }
 
-
-    //
-    const callLibrary = async() => {
-        if (!library){
-            return;
-        }
-        else {
-            const amount = await library.getBalance(account)
-            console.log(amount.toString())
-        }
-    }
-
     const setAddressValue = () => {
         return truncateAddress(account)
     }
 
     return (
-    <>
-        <Nav>
-            <Logo src={sacred_logo} />
-            <MidMenu>
+        <>
+            <Nav>
+                <Logo src={sacred_logo}/>
+                <MidMenu>
                     <ButtonSwap $activeButton={activeButton} to="/">Swap</ButtonSwap>
                     <ButtonAbout $activeButton={activeButton} to="/about">About </ButtonAbout>
-            </MidMenu>
-            <RightMenu>
-                <PolygonWrapper>
-                <PolygonButton> Polygon Testnet </PolygonButton>
-                    <PolygonPopup>Only testnet during beta testing</PolygonPopup>
-                </PolygonWrapper>
-                <ConnectWrapper>
-                <ConnectWalletButton onClick={() => onClickConnectWalletButton() }> {active ? setAddressValue() : 'Connect Wallet'}  </ConnectWalletButton>
-                </ConnectWrapper>
-                {/*<ThreeDotsButton>...</ThreeDotsButton>*/}
-            </RightMenu>
-        </Nav>
-    </>
+                </MidMenu>
+                <RightMenu>
+                    <PolygonWrapper>
+                        <PolygonButton> Polygon Testnet </PolygonButton>
+                        <PolygonPopup>Only testnet during beta testing</PolygonPopup>
+                    </PolygonWrapper>
+                    <ConnectWrapper $activeAccount={active}>
+                        <ConnectWalletButton
+                            $activeAccount={active}
+                            onClick={() => onClickConnectWalletButton()}>
+                            {active ? setAddressValue() : 'Connect Wallet'}
+                        </ConnectWalletButton>
+                        <DisconnectPopup onClick={() => deactivate()}
+                        >Disconnect</DisconnectPopup>
+                    </ConnectWrapper>
+                    {/*<ThreeDotsButton>...</ThreeDotsButton>*/}
+                </RightMenu>
+            </Nav>
+        </>
     )
 }
 export default Header;
@@ -147,10 +141,42 @@ const PolygonButton = styled.div`
   height: 30px;
   user-select: none;
   width: 130px;
-  background-color: rgba(23, 42, 66, 0.47);
+  background-color: rgba(7, 13, 19, 0.47);
   color: rgba(70, 128, 208, 0.55);
   border-radius: 15px;
   font-weight: bold;
+`
+
+const DisconnectPopup = styled.div`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 30px;
+  background-color: rgb(31, 39, 55);
+  color: rgb(70, 128, 208);
+  border-radius: 15px;
+  transition: all 250ms;
+  width: 130px;
+  height: 30px;
+  font-size: 0.8rem;
+  opacity: 0;
+  cursor: pointer;
+  font-weight: bold;
+  &:hover {
+    border: 1px solid #4680d0;
+    background-color: rgba(0,0,0,0.5);
+  }
+
+`
+
+const ConnectWrapper = styled.div`
+  position: relative;
+  &:hover {
+    ${DisconnectPopup} {
+      opacity: ${props => props.$activeAccount ? 1 : 0};
+    }
+  }
 `
 
 
@@ -171,16 +197,14 @@ const ConnectWalletButton = styled.button`
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    border: 1px solid #4680d0;
-    background-color: rgba(0,0,0,0.5);
+    border: ${props => props.$activeAccount ? '1px solid transparent' : '1px solid #4680d0'};
+    background-color: ${props => props.$activeAccount ? '#172a42' : 'rgba(0,0,0,0.5)'};
   }
 
   &:active {
     color: white;
     background-color: #335273;
   }
-
-
 `
 const ThreeDotsButton = styled.button`
   width: 30px;
@@ -240,5 +264,3 @@ const PolygonWrapper = styled.div`
 `
 
 
-
-const ConnectWrapper = styled.div``

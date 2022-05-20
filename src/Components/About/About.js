@@ -52,16 +52,6 @@ const TLDRContainer = styled.div`
   margin-left: calc(3.5vw + 5px);
 `
 
-const Pwrapper = styled.div`
-    display: flex;
-    align-items: center;
-`
-
-const Pitalics = styled.p`
-  font-style: italic;
-  margin-left: 2px;
-`
-
 const GoalContainer = styled.div`
   margin-left: calc(3.5vw + 5px);
 `

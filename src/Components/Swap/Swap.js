@@ -14,7 +14,7 @@ import {setCalculateMessageWarning, setName, setMessage} from "../../features/me
 
 const Swap = (props) => {
 
-    const {active, account, library} = useWeb3React();
+    const {active, library} = useWeb3React();
 
     const [setConnectModal, setCoinModal, setSettingsModal] = props.functions
 
@@ -62,9 +62,6 @@ const Swap = (props) => {
         const fieldOneBN = weiFromEther(fieldOne.toString())
         const balanceBN = ethers.BigNumber.from(balance)
 
-        console.log("field one is " + fieldOne.toString())
-        console.log("balance is " + etherFromWei(balance))
-
         if (tokenOne.value.id === "1" && fieldOneBN.gt(balanceBN)) {
             setAccountWarningText("Not enough balance for the transaction")
             setShowAccountWarning(true)
@@ -94,10 +91,17 @@ const Swap = (props) => {
             setSwapEnabled(false)
         }
         else {
-            console.log("it's true")
             setSwapEnabled(true)
         }
-    }, [showAccountWarning, showBalanceWarning, showApprovedBtn, messageWarning, tokenOne, tokenTwo, active])
+    }, [showAccountWarning,
+        showBalanceWarning,
+        showApprovedBtn,
+        messageWarning,
+        tokenOne,
+        tokenTwo,
+        fieldOne,
+        fieldTwo,
+        active])
 
 
     const checkIfApprovalNeeded = () => {
@@ -354,20 +358,24 @@ const Swap = (props) => {
             const contract = new ethers.Contract(tokenOne.value.exchangeAddress, Exchange.abi, library.getSigner())
             const minAmountMatic = calculateMinAmount()
             const tokensSoldBN = weiFromEther(fieldOne.toString())
-            // const minAmountScaled = etherFromWei(minAmount)
 
             try {
-                const txResult = await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
-                await txResult.wait()
-                //send message if the checkmark has been selected:
-                checkedBool && checkMessageLength() && await sendMessage(tokenOne.value.symbol)
-                clearValues()
+                if (!checkedBool) {
+                    const txResult = await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
+                    await txResult.wait()
+                    clearValues()
+                }
+                //checking if the message is not empty
+                else if (checkMessageLength()) {
+                    const txResult = await contract.tokenToEthSwapSacredOne(tokensSoldBN, minAmountMatic, name, message)
+                    await txResult.wait()
+                    await sendMessage(tokenTwo.value.symbol)
+                    clearValues()
+                }
             } catch (error) {
                 console.log(error)
             }
-
             console.log("done publishing on the chain")
-
         }
 
         if ((tokenOne.value.symbol === 'MATIC') &&

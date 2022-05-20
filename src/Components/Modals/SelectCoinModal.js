@@ -6,7 +6,6 @@ import {useSelector} from "react-redux";
 import {setTokenOne} from "../../features/tokens/tokenOneSlice";
 import {setTokenTwo} from "../../features/tokens/tokenTwoSlice";
 import {useDispatch} from "react-redux";
-import {useState} from "react";
 
 const SelectCoinModal = (props) => {
 

@@ -16,7 +16,6 @@ import {useWeb3React} from "@web3-react/core";
 
 import {useDispatch} from "react-redux";
 import {
-    setAllowance,
     setAllowanceAndBalance
 } from "./features/activeTokenNumbers/activeTokenNumbers";
 import {etherFromWei} from "./constants/utils";
@@ -113,7 +112,7 @@ function App() {
       <SelectCoinModal functions={[coinModal, setCoinModal]}/>
       <SwapSettingsModal functions={[settingsModal, setSettingsModal]}/>
       <Main className="App">
-        <Header functions={[connectModal, setConnectModal]}/>
+        <Header functions={[setConnectModal]}/>
           <Routes>
               <Route path="/" element={<><Guidelines functions={[activeTokenAttributes]}/>
                   <Swap functions={[setConnectModal, setCoinModal, setSettingsModal]}/>

@@ -9,8 +9,6 @@ import {setName, setChecked, setMessage, setMessageWarning} from "../../features
 
 const Guidelines = (props) => {
 
-    // const [checked, setChecked] = useState(true);
-
     const [activeTokenAttributes]= props.functions
 
     const dispatch = useDispatch();
@@ -18,7 +16,6 @@ const Guidelines = (props) => {
     const globalName = useSelector(state => state.messages.name);
     const globalMessage = useSelector(state => state.messages.message);
     const globalChecked = useSelector(state => state.messages.checkedBool);
-    const messageWarning = useSelector(state => state.messages.messageWarning);
     const calculateMessageWarning = useSelector(state => state.messages.calculateMessageWarning);
 
     const handleMessageWarning = (bool) => {
@@ -114,7 +111,7 @@ const Container = styled.div`
   @media (max-width: 495px) {
     min-width: 350px;
     width: 95%;
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 10px;
   }
   
@@ -198,7 +195,7 @@ const InputGratitudeObject = styled.textarea`
   @media (max-width: 495px) {
     min-width: 350px;
     width: 95%;
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 10px;
   }
 

@@ -1,32 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import { useSelector} from "react-redux";
-import { useEffect, useState} from "react";
 
 //all of the writing for this component is found in the tokenListSlice.js file
 
 const Guidelines = (props) => {
 
     const [activeTokenAttributes]= props.functions
-
-    //this holds all of the information about the active token, after being filtered by the useEffect
-
-    // //this gets the token list from the redux store:
-    // const tokenList = useSelector((state) => state.tokenList)
-    //
-    // //this retrieves the active token from the redux store:
-    // const activeToken = useSelector((state) => state.token)
-    //
-    // //use effect that updates the active token attributes whenever the active token changes:
-    // useEffect(() => {
-    //     const newActiveToken = tokenList.value.filter((token) => {
-    //         return token.symbol === activeToken.value
-    //     })
-    //     setActiveTokenAttributes(newActiveToken[0])
-    //     console.log(newActiveToken[0])
-    // }, [activeToken])
-
 
     return (
         <Container>
