@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import {BiCheckbox} from 'react-icons/bi';
 import {BiCheckboxChecked} from 'react-icons/bi';
-import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {setName, setChecked, setMessage, setMessageWarning} from "../../features/messages/messagesSlice";
+import {QuestionCircle, QuestionHoverBox} from "../Guidelines/Guidelines";
 
 const Guidelines = (props) => {
 
@@ -65,7 +65,12 @@ const Guidelines = (props) => {
                 </CheckboxWrapper>
                 <h3>{activeTokenAttributes && activeTokenAttributes.messageTitle}</h3>
                 <QuestionMarkWrapper>
-                    <AiOutlineQuestionCircle size={20}/>
+                    <QuestionCircleMsgs size={20}/>
+                    <QuestionHoverBoxMsgs>
+                        <p>Coin Messages are a unique feature of sacred coins. These messages get stored on the blockchain in the coin events, and are also saved on social media (i.e. Twitter for now)</p>
+                        <p>Hint: Enter your twitter handle in place of the name, and when you buy the coin, you will be tagged in the message on Twitter.</p>
+
+                    </QuestionHoverBoxMsgs>
                 </QuestionMarkWrapper>
             </TitleWrapper>
             <StatementWrapper>
@@ -105,7 +110,7 @@ const Container = styled.div`
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
   //height: ${props => props.globalChecked ? "350px" : "100px"};
-  overflow-y:hidden;
+  //overflow-y:hidden;
   transition: height 0.2s ease-in-out;
 
   @media (max-width: 495px) {
@@ -127,13 +132,21 @@ const CheckboxWrapper = styled.div`
   margin: 10px;
   display:flex;
   position: relative;
-`;
+`
+
+const QuestionHoverBoxMsgs = styled(QuestionHoverBox)`
+`
 
 const QuestionMarkWrapper = styled.div`
   display: flex;
   right: 10px;
   top: 10px;
   position: absolute;
+  &:hover {
+    ${QuestionHoverBoxMsgs} {
+      opacity: 1;
+    }  
+  }
 `
 const StatementWrapper = styled.div`
   margin:10px;
@@ -193,7 +206,7 @@ const InputGratitudeObject = styled.textarea`
   max-height: 100px;
 
   @media (max-width: 495px) {
-    min-width: 350px;
+    min-width: 310px;
     width: 95%;
     margin-top: 0;
     margin-bottom: 10px;
@@ -205,4 +218,10 @@ const InputGratitudeObject = styled.textarea`
   &:hover {
     border: 1px solid #737373;
   }
+`
+
+
+
+const QuestionCircleMsgs = styled(QuestionCircle)`
+
 `

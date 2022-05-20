@@ -76,7 +76,7 @@ const TitleWrapper = styled.div`
   position: relative;
 `;
 
-const QuestionHoverBox = styled.div`
+export const QuestionHoverBox = styled.div`
   position: absolute;
   right: -250px;
   top: 20px;
@@ -101,7 +101,7 @@ const QuestionHoverBox = styled.div`
 `
 
 
-const QuestionMarkWrapper = styled.div`
+export const QuestionMarkWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
@@ -111,7 +111,7 @@ const QuestionMarkWrapper = styled.div`
     }
 `;
 
-const QuestionCircle = styled(AiOutlineQuestionCircle)`
+export const QuestionCircle = styled(AiOutlineQuestionCircle)`
   transition: all 200ms;
 
   &:hover {
