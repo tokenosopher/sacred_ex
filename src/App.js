@@ -21,13 +21,14 @@ import {
 import {etherFromWei} from "./constants/utils";
 import {Route, Routes} from "react-router-dom";
 import About from "./Components/About/About";
+import ChainIdModal from "./Components/Modals/ChainIdModal";
 
 
 function App() {
 
     const dispatch = useDispatch();
 
-    const { active, account, library} = useWeb3React();
+    const { active, account, library, chainId} = useWeb3React();
 
     const [activeTokenAttributes, setActiveTokenAttributes] = useState();
 
@@ -95,7 +96,7 @@ function App() {
 
         }
 
-    if (active) {
+    if (active && (chainId.toString() === "80001")) {
         updateAllowance().catch(console.error)
     }
     else {
@@ -104,13 +105,14 @@ function App() {
             balance: ""
         })
     }
-    }, [tokenOne, active])
+    }, [tokenOne, active, chainId])
 
   return (
       <>
       <ConnectModal functions={[connectModal, setConnectModal]}/>
       <SelectCoinModal functions={[coinModal, setCoinModal]}/>
       <SwapSettingsModal functions={[settingsModal, setSettingsModal]}/>
+      <ChainIdModal functions={[settingsModal, setSettingsModal]}/>
       <Main className="App">
         <Header functions={[setConnectModal]}/>
           <Routes>

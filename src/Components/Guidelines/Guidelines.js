@@ -14,7 +14,12 @@ const Guidelines = (props) => {
                 <TitleWrapper>
                     <h2>{activeTokenAttributes && activeTokenAttributes.guidelineTitle}</h2>
                     <QuestionMarkWrapper>
-                        <AiOutlineQuestionCircle size={20}/>
+                        <QuestionCircle size={20}/>
+                        <QuestionHoverBox>
+                            <p>Guidelines are a unique feature of sacred coins. They are recommendations for the users of the coin that are hardcoded into the coin contract, and that address actions beyond what the code can do, and into what people can do.</p>
+
+
+                        </QuestionHoverBox>
                     </QuestionMarkWrapper>
                 </TitleWrapper>
                 <p> {activeTokenAttributes && activeTokenAttributes.guidelines}</p>
@@ -73,21 +78,29 @@ const TitleWrapper = styled.div`
 `;
 
 const QuestionMarkWrapper = styled.div`
-
   position: absolute;
   right: 0;
   top: 0;
-  //display: flex;
-  //justify-content: center;
-  //align-items: center;
-  //background-color: rgba(0, 0, 0, 0.4);
-  //border-radius: 50%;
-  //padding: 5px;
-  //box-shadow: 0px 0px 2px #ffffff;
-  //color: #ffffff;
-  //font-size: 20px;
-  //font-weight: bold;
-  //text-shadow: 0px 0px 2px #ffffff;
-  //z-index: 1;
-  //cursor: pointer;
 `;
+
+const QuestionCircle = styled(AiOutlineQuestionCircle)`
+  
+`;
+
+const QuestionHoverBox = styled.div`
+  position: absolute;
+  right: -250px;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(22, 21, 27);
+  border-radius: 10px;
+  width: 200px;
+  height: 200px;
+  padding: 10px;
+  font-size: 0.8rem;
+  @media (max-width: 1000px) {
+    //keep it to the rightmost part of the screen based on change in viewport size:
+    right: 0;
+  }
+`

@@ -14,13 +14,15 @@ const ConnectModal = (props) => {
 
     return (
         connectModal &&
-            <ModalContainer>
-                <ModalBox>
-                    <TitleWrapper>
+        <ModalContainer>
+            <ModalBox>
+                <TitleWrapper>
                     <ModalTitle>Connect to a Wallet</ModalTitle>
-                    <AiOutlineCloseBtn onClick={() => {setConnectModal(false)}}/>
-                    </TitleWrapper>
-                    <WalletButtonsWrapper>
+                    <AiOutlineCloseBtn onClick={() => {
+                        setConnectModal(false)
+                    }}/>
+                </TitleWrapper>
+                <WalletButtonsWrapper>
                     <WalletButton onClick={() => {
                         activate(connectors.coinbaseWallet);
                         setConnectModal(false)
@@ -43,12 +45,14 @@ const ConnectModal = (props) => {
                         <WalletText> MetaMask</WalletText>
                     </WalletButton>
 
-                    </WalletButtonsWrapper>
-                    <ButtonWrapper>
-                        <CloseButton onClick={() => {setConnectModal(false)}}>Close</CloseButton>
-                    </ButtonWrapper>
-                </ModalBox>
-            </ModalContainer>
+                </WalletButtonsWrapper>
+                <ButtonWrapper>
+                    <CloseButton onClick={() => {
+                        setConnectModal(false)
+                    }}>Close</CloseButton>
+                </ButtonWrapper>
+            </ModalBox>
+        </ModalContainer>
     )
 }
 export default ConnectModal;

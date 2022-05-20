@@ -14,7 +14,7 @@ const walletconnect = new WalletConnectConnector({
 
 const walletlink = new WalletLinkConnector({
     url: `https://polygon-mumbai.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`,
-    appName: "SacredEX"
+    appName: "SacredEx"
 });
 
 export const connectors = {

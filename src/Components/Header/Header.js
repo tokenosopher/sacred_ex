@@ -131,7 +131,7 @@ const PolygonPopup = styled.div`
   font-weight: bold;
 `
 
-const PolygonButton = styled.div`
+export const PolygonButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
