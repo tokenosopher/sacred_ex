@@ -16,9 +16,8 @@ const Guidelines = (props) => {
                     <QuestionMarkWrapper>
                         <QuestionCircle size={20}/>
                         <QuestionHoverBox>
-                            <p>Guidelines are a unique feature of sacred coins. They are recommendations for the users of the coin that are hardcoded into the coin contract, and that address actions beyond what the code can do, and into what people can do.</p>
-
-
+                            <p>Guidelines are a unique feature of sacred coins. They are recommendations for the users of the coin that are hardcoded into the coin contract, and that address actions beyond what the code can do, and into what people can do to bring the coin value.</p>
+                            <p>To learn more, visit the About section.</p>
                         </QuestionHoverBox>
                     </QuestionMarkWrapper>
                 </TitleWrapper>
@@ -77,16 +76,6 @@ const TitleWrapper = styled.div`
   position: relative;
 `;
 
-const QuestionMarkWrapper = styled.div`
-  position: absolute;
-  right: 0;
-  top: 0;
-`;
-
-const QuestionCircle = styled(AiOutlineQuestionCircle)`
-  
-`;
-
 const QuestionHoverBox = styled.div`
   position: absolute;
   right: -250px;
@@ -103,4 +92,30 @@ const QuestionHoverBox = styled.div`
     //keep it to the rightmost part of the screen based on change in viewport size:
     right: 0;
   }
+  opacity: 0;
+  transition: all 500ms;
+  p {
+    margin-top: 3px;
+    margin-bottom: 5px;
+  }
 `
+
+
+const QuestionMarkWrapper = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  &:hover {
+    ${QuestionHoverBox} {
+      opacity: 1;
+    }
+`;
+
+const QuestionCircle = styled(AiOutlineQuestionCircle)`
+  transition: all 200ms;
+
+  &:hover {
+    color: #dadada;
+  }
+`;
+
