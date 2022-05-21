@@ -39,6 +39,8 @@ const Swap = (props) => {
     const [showBalanceWarning, setShowBalanceWarning] = useState(false)
     const [balanceWarningText, setBalanceWarningText] = useState("")
     const [swapEnabled, setSwapEnabled] = useState(true)
+    const [activeFieldOne, setActiveFieldOne] = useState(true)
+    const [activeFieldTwo, setActiveFieldTwo] = useState(true)
 
 
     //sets the active field of the swap section, so that the useEffect triggered by changes in the other field
@@ -369,7 +371,7 @@ const Swap = (props) => {
                 else if (checkMessageLength()) {
                     const txResult = await contract.tokenToEthSwapSacredOne(tokensSoldBN, minAmountMatic, name, message)
                     await txResult.wait()
-                    await sendMessage(tokenTwo.value.symbol)
+                    await sendMessage(tokenOne.value.symbol)
                     clearValues()
                 }
             } catch (error) {
@@ -418,7 +420,7 @@ const Swap = (props) => {
             </MiniHeader>
             <SwapColumnOne>
                 <InputWrapper>
-                    <InputFieldOne onChange={(e) => handleFieldOneChange(e)} value={fieldOne} type="number" placeholder="0.0"/>
+                    <InputFieldOne disabled={!activeFieldOne} onChange={(e) => handleFieldOneChange(e)} value={fieldOne} type="number" placeholder="0.0"/>
                     {showApprovedBtn && <ApproveBtn onClick={() => handleApprove()}>Approve</ApproveBtn>}
 
                     <SwapOneButtonWrapper onClick = {() => coinSelectorBtn(1) }>
@@ -430,7 +432,7 @@ const Swap = (props) => {
             </SwapColumnOne>
             <SwapColumnTwo>
                 <InputWrapper>
-                    <InputFieldTwo onChange={(e) => handleFieldTwoChange(e)} value={fieldTwo} type="number" placeholder="0.0"/>
+                    <InputFieldTwo disabled={!activeFieldTwo} onChange={(e) => handleFieldTwoChange(e)} value={fieldTwo} type="number" placeholder="0.0"/>
                     <SwapTwoButtonWrapper onClick = {() => coinSelectorBtn(2)} >
                         <SwapCoinIcon src={tokenTwo.value.icon} />
                         <p>{tokenTwo && tokenTwo.value.symbol}</p>

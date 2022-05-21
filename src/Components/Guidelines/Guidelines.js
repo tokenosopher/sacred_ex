@@ -109,6 +109,7 @@ export const QuestionMarkWrapper = styled.div`
     ${QuestionHoverBox} {
       opacity: 1;
     }
+  }
 `;
 
 export const QuestionCircle = styled(AiOutlineQuestionCircle)`
