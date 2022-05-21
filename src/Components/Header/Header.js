@@ -10,6 +10,8 @@ const Header = (props) => {
 
     const [setConnectModal] = props.functions;
     const [activeButton, setActiveButton] = useState("");
+    const [showSmallScrnConnectWalletBtn, setShowSmallScrnConnectWalletBtn] = useState(false)
+    const [showSmallScrnDisconnectBtn, setShowSmallScrnDisconnectBtn] = useState(false)
 
     const { active, account, deactivate } = useWeb3React();
 
@@ -26,15 +28,36 @@ const Header = (props) => {
     }, [location])
 
 
-
-
-    const onClickConnectWalletButton = () => {
+    //takes in the smallScreen argument, which is true when the smallScrnConnectWalletBtn is pressed:
+    const onClickConnectWalletButton = (smallScreen = false) => {
         if (active) {
             return
         }
-        else {
+        else if (!smallScreen){
             setConnectModal(true)
         }
+        else if (smallScreen) {
+            setShowSmallScrnConnectWalletBtn(false)
+            setConnectModal(true)
+        }
+    }
+
+    const handleThreeDotsBtn = () => {
+        handleShowSmallScreenMenu()
+    }
+
+    const handleShowSmallScreenMenu = () => {
+        setShowSmallScrnConnectWalletBtn(!showSmallScrnConnectWalletBtn)
+        if (!active) {
+            return;
+        }
+        setShowSmallScrnDisconnectBtn(!showSmallScrnDisconnectBtn)
+    }
+
+    const handleSmallScreenDisconnectBtn = () => {
+        //order is important here, as it won't hide the smallScrnDisconnectBtn if the account is not stil active:
+        handleShowSmallScreenMenu()
+        deactivate()
     }
 
     const setAddressValue = () => {
@@ -63,7 +86,20 @@ const Header = (props) => {
                         <DisconnectPopup onClick={() => deactivate()}
                         >Disconnect</DisconnectPopup>
                     </ConnectWrapper>
-                    {/*<ThreeDotsButton>...</ThreeDotsButton>*/}
+                    <SmallScreenMenuWrapper>
+                    <ThreeDotsButton onClick={() => {handleThreeDotsBtn()}}>...</ThreeDotsButton>
+                        <SmallScreenConnectWalletBtn
+                            $activeAccount={active}
+                            $show={showSmallScrnConnectWalletBtn}
+                            onClick={() => onClickConnectWalletButton(true)}>
+                            {active ? setAddressValue() : 'Connect Wallet'}
+                        </SmallScreenConnectWalletBtn>
+                        <SmallScreenDisconnectBtn
+                            $show={showSmallScrnDisconnectBtn}
+                            onClick={() => {handleSmallScreenDisconnectBtn()}}>
+                            Disconnect
+                        </SmallScreenDisconnectBtn>
+                    </SmallScreenMenuWrapper>
                 </RightMenu>
             </Nav>
         </>
@@ -105,7 +141,13 @@ const MidMenu = styled.div`
     color: #457fcf;
     font-weight: bold;
     height: 30px;
-  }`
+  }
+  
+  @media (max-width: 768px) {
+    margin-left: 10px;
+  }
+
+`
 
 const RightMenu = styled.div`
     display: flex;
@@ -145,6 +187,9 @@ export const PolygonButton = styled.div`
   color: rgba(70, 128, 208, 0.55);
   border-radius: 15px;
   font-weight: bold;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `
 
 const DisconnectPopup = styled.div`
@@ -205,11 +250,84 @@ const ConnectWalletButton = styled.button`
     color: white;
     background-color: #335273;
   }
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
 `
 const ThreeDotsButton = styled.button`
-  width: 30px;
+  display: none;
+  width: 40px;
+  height: 30px;
+  font-weight: bold;
   margin-right: 20px;
-  `
+  background-color: #172a42;
+  color: white;
+  //make a white border:
+  border: 1px solid transparent;
+  //border: 1px solid;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    border: 1px solid white;
+    background-color: rgba(0,0,0,0.5);
+  }
+  margin-left: -10px;
+  @media (max-width: 768px) {
+    display: initial;
+  }
+`
+
+const SmallScreenMenuWrapper = styled.div`
+    position: relative;
+`
+
+const SmallScreenConnectWalletBtn = styled.div`
+  display: ${props => props.$show ? "flex" : "none"};
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  height:30px;
+  cursor: pointer;
+  user-select: none;
+  width: 130px;
+
+  background-color: #172a42;
+  color: #4680d0;
+
+  border-radius: 15px;
+  border: 1px solid transparent;
+  font-weight: bold;
+  transition: all 0.2s ease-in-out;
+  font-size: 14px;
+  
+  &:hover {
+    border: ${props => props.$activeAccount ? '1px solid transparent' : '1px solid #4680d0'};
+    background-color: ${props => props.$activeAccount ? '#172a42' : 'rgba(0,0,0,0.5)'};
+  }
+
+  &:active {
+    color: white;
+    background-color: #335273;
+  }
+
+  //@media (max-width: 768px) {
+  //  display: none;
+  //}
+`
+
+const SmallScreenDisconnectBtn = styled(SmallScreenConnectWalletBtn)`
+  top:75px;
+  display: ${props => props.$show ?  'flex': 'none'};
+  
+  &:hover {
+    border: 1px solid #4680d0;
+    background-color: rgba(0,0,0,0.5);
+  }
+`
 
 const ButtonSwap = styled(Link)`
   display: flex;
