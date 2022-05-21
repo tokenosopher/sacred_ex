@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import {BsExclamationCircle, BsGear} from 'react-icons/bs'
 import {IoMdArrowDropdown} from 'react-icons/io'
+import { DualRing, Ellipsis } from 'react-awesome-spinners'
 import {useWeb3React} from "@web3-react/core";
 import {useDispatch, useSelector} from "react-redux";
 import {setSwapButton} from "../../features/swapModal/swapButton";
@@ -10,7 +11,12 @@ import {ethers} from "ethers";
 import {setAllowance} from "../../features/activeTokenNumbers/activeTokenNumbers";
 import Exchange from "../../artifacts/src/contracts/Exchange.sol/Exchange.json";
 import {etherFromWei, weiFromEther} from "../../constants/utils";
-import {setCalculateMessageWarning, setName, setMessage} from "../../features/messages/messagesSlice";
+import {
+    setCalculateMessageWarning,
+    setName,
+    setMessage,
+    setDisableNameAndMessageFields
+} from "../../features/messages/messagesSlice";
 
 const Swap = (props) => {
 
@@ -39,8 +45,13 @@ const Swap = (props) => {
     const [showBalanceWarning, setShowBalanceWarning] = useState(false)
     const [balanceWarningText, setBalanceWarningText] = useState("")
     const [swapEnabled, setSwapEnabled] = useState(true)
-    const [activeFieldOne, setActiveFieldOne] = useState(true)
-    const [activeFieldTwo, setActiveFieldTwo] = useState(true)
+
+    const [disableFieldOne, setDisableFieldOne] = useState(false)
+    const [disableFieldTwo, setDisableFieldTwo] = useState(false)
+    const [disableButtonOne, setDisableButtonOne] = useState(false)
+    const [disableButtonTwo, setDisableButtonTwo] = useState(false)
+    const [disableApprovedBtn, setDisableApprovedBtn] = useState(false)
+    const [approveSpinner, setApproveSpinner] = useState(false)
 
 
     //sets the active field of the swap section, so that the useEffect triggered by changes in the other field
@@ -270,12 +281,59 @@ const Swap = (props) => {
         }
     }
 
+    //function to enable or disable fields. Defaults to false, so only the ones that we want disabled we need set to true:
+    //h in the variablename stands for handle:
+    const disableEnableFields =
+        (
+            hFieldOne = false,
+            hFieldTwo = false,
+            hButtonOne = false,
+            hButtonTwo = false
+        ) => {
+            setDisableFieldOne(hFieldOne)
+            setDisableFieldTwo(hFieldTwo)
+            setDisableButtonOne(hButtonOne)
+            setDisableButtonTwo(hButtonTwo)
+        }
+
+    //enabling or disabling ALL FIELDS for swapping:
+    const disableEnableFieldsForSwap = (disable = false) => {
+        setDisableFieldOne(disable)
+        setDisableFieldTwo(disable)
+        setDisableButtonOne(disable)
+        setDisableButtonTwo(disable)
+        setSwapEnabled(!disable)
+        if (checkedBool) {
+            dispatch(
+                setDisableNameAndMessageFields(disable)
+            )
+        }
+    }
+
+
     const handleApprove = async () => {
+
         const token = new ethers.Contract(tokenOne.value.address, tokenOne.value.abi, library.getSigner())
         const allowanceEth = ethers.utils.parseUnits(fieldOne, "ether")
-        let txResult = await token.approve(tokenOne.value.exchangeAddress, allowanceEth)
-        await txResult.wait()
-        console.log(txResult)
+
+        //disable all four fields:
+        disableEnableFields(true, true, true, true)
+        //enable the approve spinner:
+        setApproveSpinner(true)
+        //enable the approve button:
+        setDisableApprovedBtn(true)
+        try {
+            let txResult = await token.approve(tokenOne.value.exchangeAddress, allowanceEth)
+            await txResult.wait()
+            console.log(txResult)
+        } catch (e) {
+            console.log(e)
+        }
+
+        //enable all four fields:
+        disableEnableFields()
+        setApproveSpinner(false)
+        setDisableApprovedBtn(false)
 
         dispatch(
             setAllowance(allowanceEth.toString())
@@ -363,12 +421,14 @@ const Swap = (props) => {
 
             try {
                 if (!checkedBool) {
+                    disableEnableFieldsForSwap(true)
                     const txResult = await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
                     await txResult.wait()
                     clearValues()
                 }
                 //checking if the message is not empty
                 else if (checkMessageLength()) {
+                    disableEnableFieldsForSwap(true)
                     const txResult = await contract.tokenToEthSwapSacredOne(tokensSoldBN, minAmountMatic, name, message)
                     await txResult.wait()
                     await sendMessage(tokenOne.value.symbol)
@@ -377,7 +437,9 @@ const Swap = (props) => {
             } catch (error) {
                 console.log(error)
             }
+            disableEnableFieldsForSwap(false)
             console.log("done publishing on the chain")
+
         }
 
         if ((tokenOne.value.symbol === 'MATIC') &&
@@ -390,6 +452,7 @@ const Swap = (props) => {
 
             try {
                 if (!checkedBool) {
+                    disableEnableFieldsForSwap(true)
                     const txResult = await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
                     await txResult.wait()
                     clearValues()
@@ -397,6 +460,7 @@ const Swap = (props) => {
 
                 //checking if the message is not empty
                 else if (checkMessageLength()){
+                    disableEnableFieldsForSwap(true)
                     const txResult = await contract.ethToTokenSwapSacredOne(minAmountToken, name, message, {value: maticSoldBN})
                     await txResult.wait()
                     await sendMessage(tokenTwo.value.symbol)
@@ -406,6 +470,7 @@ const Swap = (props) => {
             catch (error) {
                 console.log(error)
             }
+            disableEnableFieldsForSwap(false)
             console.log("done publishing on the chain")
         }
 
@@ -416,36 +481,43 @@ const Swap = (props) => {
         <Container>
             <MiniHeader>
                 <HeaderText>Swap</HeaderText>
-                    <GearIcon onClick={() => {setSettingsModal(true)}}/>
+                <GearIcon onClick={() => {
+                    setSettingsModal(true)
+                }}/>
             </MiniHeader>
             <SwapColumnOne>
                 <InputWrapper>
-                    <InputFieldOne disabled={!activeFieldOne} onChange={(e) => handleFieldOneChange(e)} value={fieldOne} type="number" placeholder="0.0"/>
-                    {showApprovedBtn && <ApproveBtn onClick={() => handleApprove()}>Approve</ApproveBtn>}
-
-                    <SwapOneButtonWrapper onClick = {() => coinSelectorBtn(1) }>
-                        <SwapCoinIcon src={tokenOne.value.icon} />
-                    <p>{tokenOne && tokenOne.value.symbol}</p>
+                    <InputFieldOne disabled={disableFieldOne} onChange={(e) => handleFieldOneChange(e)} value={fieldOne}
+                                   type="number" placeholder="0.0"/>
+                    {showApprovedBtn && <ApproveBtn disabled={disableApprovedBtn} onClick={() => handleApprove()}>Approve</ApproveBtn>}
+                    <ApproveSpinnerWrapper $show={approveSpinner}>
+                        <DualRing size={20} color={"rgba(70,128,208,0.65)"}/>
+                    </ApproveSpinnerWrapper>
+                    <SwapOneButtonWrapper disabled={disableButtonOne} onClick={() => coinSelectorBtn(1)}>
+                        <SwapCoinIcon src={tokenOne.value.icon}/>
+                        <p>{tokenOne && tokenOne.value.symbol}</p>
                         <DropDown/>
                     </SwapOneButtonWrapper>
                 </InputWrapper>
             </SwapColumnOne>
             <SwapColumnTwo>
                 <InputWrapper>
-                    <InputFieldTwo disabled={!activeFieldTwo} onChange={(e) => handleFieldTwoChange(e)} value={fieldTwo} type="number" placeholder="0.0"/>
-                    <SwapTwoButtonWrapper onClick = {() => coinSelectorBtn(2)} >
-                        <SwapCoinIcon src={tokenTwo.value.icon} />
+                    <InputFieldTwo disabled={disableFieldTwo} onChange={(e) => handleFieldTwoChange(e)} value={fieldTwo}
+                                   type="number" placeholder="0.0"/>
+                    <SwapTwoButtonWrapper disabled={disableButtonTwo} onClick={() => coinSelectorBtn(2)}>
+                        <SwapCoinIcon src={tokenTwo.value.icon}/>
                         <p>{tokenTwo && tokenTwo.value.symbol}</p>
                         <DropDown/>
                     </SwapTwoButtonWrapper>
                 </InputWrapper>
             </SwapColumnTwo>
 
-            <ButtonOption disabled={!swapEnabled} onClick={() => swapOrConnectBtn()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
+            <ButtonOption disabled={!swapEnabled}
+                          onClick={() => swapOrConnectBtn()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
             {
                 showAccountWarning &&
                 <NotificationWrapper>
-                <Exclamation/><
+                    <Exclamation/><
                     p>{accountWarningText}</p>
                 </NotificationWrapper>
             }
@@ -544,10 +616,17 @@ const InputFieldOne = styled.input`
 
   transition: border 0.2s ease-in-out;
 
-  //create a white border on hover:
-  &:hover {
-    border: 1px solid #737373;
+  &:enabled {
+    &:hover {
+      border: 1px solid #737373;
+    }  
   }
+  
+  &:disabled {
+    background-color: rgb(33, 36, 42);
+    color: #737373;
+  }
+  
 `
 
 
@@ -569,15 +648,23 @@ const SwapOneButtonWrapper = styled.button`
   display: flex;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  
-  &:hover {
-    border: 1px white solid;
+
+  &:enabled {
+    &:hover {
+      border: 1px white solid;
+    }
   }
+
+  &:disabled {
+    background-color: rgba(15, 17, 19, 0.65);
+    color: rgba(255, 255, 255, 0.72);
+    border: 1px rgba(128, 128, 128, 0.55) solid;
+  }
+
 `
 
 const ApproveBtn = styled(SwapOneButtonWrapper)`
-  //hide:
-  
+
   position: absolute;
   right: 150px;
   top: 27px;
@@ -589,9 +676,19 @@ const ApproveBtn = styled(SwapOneButtonWrapper)`
   align-items: center;
   justify-content: center;
   display: flex;
-  &:hover {
-    color: white;
+
+  &:enabled {
+    &:hover {
+      color: white;
+    }  
   }
+  
+
+  &:disabled {
+    color: rgba(255, 0, 0, 0.53);
+    border: 1px rgba(255, 0, 0, 0.55) solid;
+  }
+
 `
 
 const SwapCoinIcon = styled(CoinIcon)`
@@ -663,6 +760,12 @@ const NotificationWrapper = styled.div`
 
 const Exclamation = styled(BsExclamationCircle)`
   margin-right: 5px;
+`
 
-
+const ApproveSpinnerWrapper=styled.div`
+  position: absolute;
+  right: 200px;
+  top: 22px;
+  //show only when show is true:
+  display: ${props => props.$show ? 'flex' : 'none'};
 `

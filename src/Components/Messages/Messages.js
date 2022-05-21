@@ -17,6 +17,8 @@ const Guidelines = (props) => {
     const globalMessage = useSelector(state => state.messages.message);
     const globalChecked = useSelector(state => state.messages.checkedBool);
     const calculateMessageWarning = useSelector(state => state.messages.calculateMessageWarning);
+    const disableNameField = useSelector(state => state.messages.disableNameField);
+    const disableMessageField = useSelector(state => state.messages.disableMessageField);
 
     const handleMessageWarning = (bool) => {
         dispatch(setMessageWarning(bool));
@@ -51,6 +53,13 @@ const Guidelines = (props) => {
         }
     }, [globalName, globalMessage, calculateMessageWarning]);
 
+    //if the user unchecks the need to include the message, then re-enable the swap button.
+    useEffect(() => {
+        if (!globalChecked) {
+            handleMessageWarning(false)
+        }
+    },[globalChecked])
+
 
     return (
         <Container checked={globalChecked}>
@@ -79,6 +88,7 @@ const Guidelines = (props) => {
             <InputsWrapper checked={globalChecked}>
                 <InputFirstRow>
                     <InputName
+                        disabled={disableNameField}
                         type="text"
                         placeholder={activeTokenAttributes && activeTokenAttributes.messagePlaceholderOne}
                         value={globalName}
@@ -86,7 +96,8 @@ const Guidelines = (props) => {
                     />
                     <p>{activeTokenAttributes && activeTokenAttributes.messageConnector}</p>
                 </InputFirstRow>
-                <InputGratitudeObject
+                <InputMessage
+                    disabled={disableMessageField}
                     type={"textarea"}
                     rows={"5"}
                     placeholder={activeTokenAttributes && activeTokenAttributes.messagePlaceholderTwo}
@@ -187,22 +198,28 @@ const InputName = styled.input`
   transition: border 0.2s ease-in-out;
 
   //create a white border on hover:
-  &:hover {
-    border: 1px solid #737373;
+  &:enabled {
+    &:hover {
+      border: 1px solid #737373;
+    }
+  }
+
+  &:disabled {
+    background: rgba(33, 36, 43, 0.51);
   }
 `
 
-const InputGratitudeObject = styled.textarea`
+const InputMessage = styled.textarea`
   background: #21242b;
   color: white;
   border: 1px solid transparent;
   box-shadow: black;
   border-radius: 5px;
-  margin-bottom:10px;
-  width:440px;
+  margin-bottom: 10px;
+  width: 440px;
   font-size: 15px;
   padding-left: 10px;
-  padding-top:10px;
+  padding-top: 10px;
   max-height: 100px;
 
   @media (max-width: 495px) {
@@ -215,9 +232,16 @@ const InputGratitudeObject = styled.textarea`
   transition: border 0.2s ease-in-out;
 
   //create a white border on hover:
-  &:hover {
-    border: 1px solid #737373;
+  &:enabled {
+    &:hover {
+      border: 1px solid #737373;
+    }
   }
+
+  &:disabled {
+    background: rgba(33, 36, 43, 0.51);
+  }
+
 `
 
 
