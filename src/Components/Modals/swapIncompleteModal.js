@@ -28,7 +28,7 @@ const SwapIncompleteModal = () => {
                 <ModalText>
                     There was an issue with the process.
                 </ModalText>
-                {completedTransactionHash && <ModalText>The transaction went through just fine on the blockchain, you can see it <a href={"https://mumbai.polygonscan.com/tx/" + completedTransactionHash} target="_blank" rel="noreferrer noopener">here</a></ModalText>}
+                {completedTransactionHash && <ModalText>The transaction went through just fine on the blockchain, you can see it <a href={"https://mumbai.polygonscan.com/tx/" + completedTransactionHash + "#eventlog"} target="_blank" rel="noreferrer noopener">here</a></ModalText>}
                 {checkedBool && !twitterMsgId &&  <ModalText>The message seems to not have been added to twitter. This is a known bug that affects random devices, and is due to the API, we are sorry and are working on a fix. If tis happens to you please let us know, and try another device.</ModalText>}
                 <CloseButtonWrapper>
                     <CloseButton onClick={() => handleClose()}>Close</CloseButton>

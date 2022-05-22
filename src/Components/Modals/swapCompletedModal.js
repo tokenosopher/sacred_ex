@@ -28,7 +28,7 @@ const SwapCompletedModal = () => {
                 <Line/>
                 <ModalText>
                     Congratulations, your swap is done processing.
-                    You can inspect the blockchain transaction <a href={"https://mumbai.polygonscan.com/tx/" + completedTransactionHash} target="_blank" rel="noreferrer noopener">here</a>.
+                    You can inspect the blockchain transaction <a href={"https://mumbai.polygonscan.com/tx/" + completedTransactionHash + "#eventlog"} target="_blank" rel="noreferrer noopener">here</a>.
                 </ModalText>
                 {!checkedBool && <ModalText> Check out the awesome messages that others have written when trading the coin by visiting <a href={"https://twitter.com/CoinMessages"} target="_blank" rel="noreferrer noopener">this page</a> . <FaTwitter size={10}/></ModalText>}
                 {checkedBool && <ModalText>The message you wrote will be there as well.</ModalText>}

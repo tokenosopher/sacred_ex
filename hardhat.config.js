@@ -1,4 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan")
+require('dotenv').config()
 
 const fs = require("fs");
 
@@ -45,6 +47,11 @@ module.exports = {
       accounts: {
         mnemonic: mnemonic(),
       }
+    }
+  },
+  etherscan: {
+    apiKey: {
+      polygonMumbai: "U1XSIXWAQBET3IZMK9R68E29466CNNQZ7K"
     }
   }
 };
