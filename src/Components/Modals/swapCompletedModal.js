@@ -28,10 +28,10 @@ const SwapCompletedModal = () => {
                 <Line/>
                 <ModalText>
                     Congratulations, your swap is done processing.
-                    You can inspect the blockchain transaction <a href={"https://mumbai.polygonscan.com/tx/" + completedTransactionHash}>here</a>.
+                    You can inspect the blockchain transaction <a href={"https://mumbai.polygonscan.com/tx/" + completedTransactionHash} target="_blank" rel="noreferrer noopener">here</a>.
                 </ModalText>
                 {checkedBool && <ModalText>The message you wrote will be there as well.</ModalText>}
-                {checkedBool && <ModalText>You can also find your message on Twitter <a href={"https://twitter.com/CoinMessages/status/" + twitterMsgId}>here</a>. <FaTwitter size={10}/></ModalText>}
+                {checkedBool && <ModalText>You can also find your message on Twitter <a href={"https://twitter.com/CoinMessages/status/" + twitterMsgId} target="_blank" rel="noreferrer noopener">here</a>. <FaTwitter size={10}/></ModalText>}
                 <CloseButtonWrapper>
                 <CloseButton onClick={() => handleClose()}>Close</CloseButton>
                 </CloseButtonWrapper>
@@ -99,6 +99,8 @@ const CloseButtonWrapper = styled.div`
 `
 
 const CloseButton = styled.div`
+  position: absolute;
+  bottom: 20px;
   display: flex;
   justify-content: center;
   align-items: center;

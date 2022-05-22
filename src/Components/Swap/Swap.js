@@ -411,7 +411,7 @@ const Swap = (props) => {
             }
         })
         const json = await response.json()
-        console.log(json)
+        return json
     }
 
     const checkMessageLength = () => {
@@ -459,7 +459,7 @@ const Swap = (props) => {
                     await txResult.wait()
                     handleCompletedTransactionHash(txResult.hash)
                     const messageRes = await sendMessage(tokenOne.value.symbol)
-                    handleTwitterMsg(messageRes.id_str)
+                    handleTwitterMsg(messageRes.msg_twitter_id)
                     handleSwapCompletedModal(true)
                     clearValues()
                 }
@@ -497,7 +497,7 @@ const Swap = (props) => {
                     handleCompletedTransactionHash(txResult.hash)
                     handleSwapCompletedModal(true)
                     const messageRes = await sendMessage(tokenTwo.value.symbol)
-                    handleTwitterMsg(messageRes.id_str)
+                    handleTwitterMsg(messageRes.msg_twitter_id)
                     clearValues()
                 }
             }
