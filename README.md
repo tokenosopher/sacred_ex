@@ -1,15 +1,11 @@
-# Basic Sample Hardhat Project
+# SacredEx
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+A Decentralized Exchange that aims to tackle some of the fundamental problems that our society faces, and also aims to make the users of the dex healthier, happier and more knowledgeable.
 
-Try running some of the following tasks:
+Deployed on IPFS:
+https://icy-hat-5903.on.fleek.co/
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+In Beta Mode.
+
+Other useful links:
+https://showcase.ethglobal.com/hackmoney2022/sacredex-16z0d
