@@ -23,6 +23,7 @@ import {etherFromWei} from "./constants/utils";
 import {Route, Routes} from "react-router-dom";
 import About from "./Components/About/About";
 import ChainIdModal from "./Components/Modals/ChainIdModal";
+import SwapIncompleteModal from "./Components/Modals/swapIncompleteModal";
 
 
 
@@ -49,7 +50,8 @@ function App() {
     const tokenTwo = useSelector((state) => state.tokenTwo)
 
     // more retrievals:
-    const swapCompletedModalState = useSelector((state) => state.swapCompletedModalState.isOpen)
+    const swapCompletedModalState = useSelector((state) => state.swapCompletedModalState.isOpened)
+    const swapIncompleteModalState = useSelector((state) => state.swapCompletedModalState.incompleteIsOpen)
 
     //use effect that updates the active token attributes whenever the active token changes:
     //if both tokens are matic, then it switches to the default - gratitude coin
@@ -121,6 +123,7 @@ function App() {
       <SwapSettingsModal functions={[settingsModal, setSettingsModal]}/>
       <ChainIdModal functions={[settingsModal, setSettingsModal]}/>
       {swapCompletedModalState && <SwapCompletedModal/>}
+          {swapIncompleteModalState && <SwapIncompleteModal/>}
       <Main className="App">
         <Header functions={[setConnectModal]}/>
           <Routes>
