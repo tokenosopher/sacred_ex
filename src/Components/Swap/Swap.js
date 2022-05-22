@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import {BsExclamationCircle, BsGear} from 'react-icons/bs'
 import {IoMdArrowDropdown} from 'react-icons/io'
-import { DualRing } from 'react-awesome-spinners'
+import {DualRing} from 'react-awesome-spinners'
 import {useWeb3React} from "@web3-react/core";
 import {useDispatch, useSelector} from "react-redux";
 import {setSwapButton} from "../../features/swapModal/swapButton";
@@ -13,16 +13,17 @@ import Exchange from "../../artifacts/src/contracts/Exchange.sol/Exchange.json";
 import {etherFromWei, weiFromEther} from "../../constants/utils";
 import {
     setCalculateMessageWarning,
-    setName,
-    setMessage,
+    setDisableCheckbox,
     setDisableNameAndMessageFields,
-    setDisableCheckbox
+    setMessage,
+    setName
 } from "../../features/messages/messagesSlice";
 
 import {
-    setTwitterMsgId,
     setCompletedTransactionHash,
-    setSwapCompletedModalState
+    setIncompleteSwapModalState,
+    setSwapCompletedModalState,
+    setTwitterMsgId
 } from "../../features/swapCompletedModal/swapCompletedModalSlice";
 
 const Swap = (props) => {
@@ -43,7 +44,7 @@ const Swap = (props) => {
     const message = useSelector((state) => state.messages.message)
     const checkedBool = useSelector((state) => state.messages.checkedBool)
     const messageWarning = useSelector((state) => state.messages.messageWarning)
-    // const swapCompletedModal = useSelector((state) => state.swapCompletedModalState.isOpen)
+    // const swapCompletedModalState = useSelector((state) => state.swapCompletedModalState.isOpened)
 
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
@@ -410,8 +411,7 @@ const Swap = (props) => {
                 "Content-Type": "application/json"
             }
         })
-        const json = await response.json()
-        return json
+        return await response.json()
     }
 
     const checkMessageLength = () => {
@@ -464,7 +464,8 @@ const Swap = (props) => {
                     clearValues()
                 }
             } catch (error) {
-                console.log(error)
+                //if the success box didn't come up, bring up the incomplete transaction modal:
+                handleSwapIncompleteModal()
             }
             disableFieldsForSwap(false)
             console.log("done publishing on the chain")
@@ -495,16 +496,18 @@ const Swap = (props) => {
                     const txResult = await contract.ethToTokenSwapSacredOne(minAmountToken, name, message, {value: maticSoldBN})
                     await txResult.wait()
                     handleCompletedTransactionHash(txResult.hash)
-                    handleSwapCompletedModal(true)
+                    await handleSwapCompletedModal(true)
                     const messageRes = await sendMessage(tokenTwo.value.symbol)
                     handleTwitterMsg(messageRes.msg_twitter_id)
                     clearValues()
                 }
             }
             catch (error) {
-                console.log(error)
+                //if the success box didn't come up, bring up the incomplete transaction modal:
+                handleSwapIncompleteModal()
             }
             disableFieldsForSwap(false)
+
             console.log("done publishing on the chain")
         }
 
@@ -525,6 +528,12 @@ const Swap = (props) => {
     const handleSwapCompletedModal = () => {
         dispatch(
             setSwapCompletedModalState(true)
+        )
+    }
+
+    const handleSwapIncompleteModal = () => {
+        dispatch(
+            setIncompleteSwapModalState(true)
         )
     }
 
