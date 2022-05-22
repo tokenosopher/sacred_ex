@@ -79,8 +79,8 @@ const Guidelines = (props) => {
                 <QuestionMarkWrapper>
                     <QuestionCircleMsgs size={20}/>
                     <QuestionHoverBoxMsgs>
-                        <p>Coin Messages are a unique feature of sacred coins. These messages get stored on the blockchain in the coin events, and are also saved on social media (i.e. Twitter for now)</p>
-                        <p>Hint: Enter your twitter handle in place of the name, and when you buy the coin, you will be tagged in the Tweet.</p>
+                        <p>Coin Messages are a unique feature of sacred coins. These messages get stored on the blockchain in the coin events, and SacredEx also allows them to be saved on social media (i.e. Twitter for now)</p>
+                        <p>Hint: Enter your twitter handle in place of the name, and when you buy the coin, you will be tagged in the tweet.</p>
 
                     </QuestionHoverBoxMsgs>
                 </QuestionMarkWrapper>

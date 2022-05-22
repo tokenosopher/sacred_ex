@@ -68,6 +68,8 @@ function App() {
     }, [tokenOne, tokenTwo])
 
     //useEffect that updates the allowance and the user balance for the token in redux whenever token one changes, or whenever the user logs in:
+    //TODO: added a bit of a hack where the useEffect checks if the success modal has been opened to update the balance after a successful transaction. Works for now for timesaving.
+    //but the above needs to be changed because if the transaction has gone through but the modal does not show up, the balance won't update.
     useEffect(() => {
         async function updateAllowance() {
             //if the tokenOne is MATIC
@@ -110,7 +112,7 @@ function App() {
             balance: ""
         })
     }
-    }, [tokenOne, active, chainId])
+    }, [tokenOne, active, chainId, swapCompletedModalState])
 
   return (
       <>

@@ -38,11 +38,10 @@ const ChainIdModal = () => {
                         params: [
                             {
                                 "chainId": "0x13881",
-                                rpcUrls:["https://rpc-mumbai.matic.today/"],
+                                rpcUrls:["https://matic-mumbai.chainstacklabs.com"],
                                 chainName: "Polygon Testnet",
                                 nativeCurrency: { name: "MATIC", decimals: 18, symbol: "MATIC" },
-                                blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
-                                iconUrls: ["https://cdn.iconscout.com/icon/free/png-256/polygon-token-4086724-3379854.png"]
+                                blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
                             }
                         ],
                     });
@@ -78,16 +77,16 @@ const ChainIdModal = () => {
                     <ModalTitleChainId>
                         Please connect to Polygon Testnet
                     </ModalTitleChainId>
-                    <AiOutlineCloseBtn onClick={() => {
-                        setOpenChainIdModal(false)
-                    }}/>
+                    {/*<AiOutlineCloseBtn onClick={() => {*/}
+                    {/*    setOpenChainIdModal(false)*/}
+                    {/*}}/>*/}
                 </TitleWrapperChainId>
                 <TextWrapper>
                     <p>The dex functionality will be disabled until you do.</p>
-                    <p>You can click on the button below to set your network to Polygon Testnet.</p>
+                    <p>You can click on the button below to set your network to Polygon Testnet. If that doesn't work, please <a href={"https://stackoverflow.com/questions/70373443/how-to-use-testnet-during-development-in-coinbase-wallet/71518418#71518418"} target="_blank" rel="noreferrer noopener">switch manually</a> in your wallet.</p>
                 </TextWrapper>
                 <ButtonWrapper>
-                    <SwitchNetworkBtn onClick={() => switchNetwork()}>Switch to Polygon</SwitchNetworkBtn>
+                    <SwitchNetworkBtn onClick={() => switchNetwork()}>Switch to Polygon Testnet</SwitchNetworkBtn>
                 </ButtonWrapper>
             </ModalBoxChainId>
         </ModalContainer>
@@ -118,15 +117,19 @@ const TextWrapper = styled.div`
   p {
     font-size: 14px;
   }
+
+  a {
+    color: white;
+  }
   
 `
 
 const SwitchNetworkBtn = styled.button`
-  margin-top: 30px;
-  height: 30px;
+  margin-top: 15px;
+  height: 45px;
   cursor: pointer;
   user-select: none;
-  width: 130px;
+  width: 200px;
 
   background-color: #172a42;
   color: #4680d0;

@@ -3,7 +3,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import tokens from './tokens'
 
 const initialState = {
-    value: tokens[0]
+    value: tokens[1]
 }
 
 const tokenTwoSlice = createSlice({
