@@ -53,6 +53,7 @@ const Swap = (props) => {
     const [accountWarningText, setAccountWarningText] = useState("")
     const [showBalanceWarning, setShowBalanceWarning] = useState(false)
     const [balanceWarningText, setBalanceWarningText] = useState("")
+    const [bothFieldsAreTokensWarning, setBothFieldsAreTokensWarning] = useState(false)
     const [swapEnabled, setSwapEnabled] = useState(true)
 
     const [disableFieldOne, setDisableFieldOne] = useState(false)
@@ -133,6 +134,15 @@ const Swap = (props) => {
         fieldTwo,
         active])
 
+    useEffect(() => {
+        if (active && ((tokenOne.value.id !== "1") && (tokenTwo.value.id !== "1"))) {
+            setBothFieldsAreTokensWarning(true)
+        }
+        else {
+            setBothFieldsAreTokensWarning(false)
+        }
+    }, [tokenOne, tokenTwo, active])
+
 
     const checkIfApprovalNeeded = () => {
         const fieldOneWei = weiFromEther(fieldOne.toString())
@@ -152,7 +162,11 @@ const Swap = (props) => {
             //if balance exists and the amount entered is lower than what has already been approved
             //or the amount entered is higher than the balance of the user
             //or there is no amount entered:
-        else if (balance && (fieldOneWei.lte(approvedBN) || fieldOneWei.gt(balanceBN) || !fieldOneWei || Number(fieldOne) === 0)) {
+        else if (
+            balance && (fieldOneWei.lte(approvedBN) ||
+            fieldOneWei.gt(balanceBN) ||
+            !fieldOneWei ||
+            Number(fieldOne) === 0)) {
             setShowApprovedBtn(false)
         }
     }
@@ -170,7 +184,7 @@ const Swap = (props) => {
 
                 //checking if field one is larger than the balance:
                 if (balance && fieldOneWei.gt(balance)) {
-
+                 //TODO check this out
                 }
 
                 else {
@@ -584,21 +598,25 @@ const Swap = (props) => {
             {
                 showAccountWarning &&
                 <NotificationWrapper>
-                    <Exclamation/><
-                    p>{accountWarningText}</p>
+                    <p><Exclamation/>{accountWarningText}</p>
                 </NotificationWrapper>
             }
             {
                 showBalanceWarning &&
                 <NotificationWrapper>
-                    <Exclamation/><
-                    p>{balanceWarningText}</p>
+                    <p><Exclamation/> {balanceWarningText}</p>
                 </NotificationWrapper>
             }
             {messageWarning &&
                 <NotificationWrapper>
-                    <Exclamation/>
-                    <p>{"Please fill or uncheck the message below."}</p>
+
+                    <p><Exclamation/> {"Please fill or uncheck the message below."}</p>
+                </NotificationWrapper>
+            }
+            {bothFieldsAreTokensWarning &&
+                <NotificationWrapper>
+
+                    <p><Exclamation/> {"Only token to MATIC or MATIC to token swaps are currently available."}</p>
                 </NotificationWrapper>
             }
 
@@ -832,6 +850,12 @@ const NotificationWrapper = styled.div`
   margin-bottom: 10px;
   //set text size to be smaller:
   font-size: 0.9em;
+  p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+  }
 `
 
 const Exclamation = styled(BsExclamationCircle)`
