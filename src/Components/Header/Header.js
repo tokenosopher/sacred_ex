@@ -314,9 +314,9 @@ const SmallScreenConnectWalletBtn = styled.div`
     background-color: #335273;
   }
 
-  //@media (max-width: 768px) {
-  //  display: none;
-  //}
+  @media (min-width: 768px) {
+    display: none;
+  }
 `
 
 const SmallScreenDisconnectBtn = styled(SmallScreenConnectWalletBtn)`
@@ -326,6 +326,9 @@ const SmallScreenDisconnectBtn = styled(SmallScreenConnectWalletBtn)`
   &:hover {
     border: 1px solid #4680d0;
     background-color: rgba(0,0,0,0.5);
+  }
+  @media (min-width: 768px) {
+    display: none;
   }
 `
 

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import {BsExclamationCircle, BsGear} from 'react-icons/bs'
 import {IoMdArrowDropdown} from 'react-icons/io'
-import { DualRing, Ellipsis } from 'react-awesome-spinners'
+import { DualRing } from 'react-awesome-spinners'
 import {useWeb3React} from "@web3-react/core";
 import {useDispatch, useSelector} from "react-redux";
 import {setSwapButton} from "../../features/swapModal/swapButton";
@@ -15,8 +15,15 @@ import {
     setCalculateMessageWarning,
     setName,
     setMessage,
-    setDisableNameAndMessageFields
+    setDisableNameAndMessageFields,
+    setDisableCheckbox
 } from "../../features/messages/messagesSlice";
+
+import {
+    setTwitterMsgId,
+    setCompletedTransactionHash,
+    setSwapCompletedModalState
+} from "../../features/swapCompletedModal/swapCompletedModalSlice";
 
 const Swap = (props) => {
 
@@ -36,6 +43,7 @@ const Swap = (props) => {
     const message = useSelector((state) => state.messages.message)
     const checkedBool = useSelector((state) => state.messages.checkedBool)
     const messageWarning = useSelector((state) => state.messages.messageWarning)
+    // const swapCompletedModal = useSelector((state) => state.swapCompletedModalState.isOpen)
 
     const [fieldOne, setFieldOne] = useState("")
     const [fieldTwo, setFieldTwo] = useState("")
@@ -52,6 +60,7 @@ const Swap = (props) => {
     const [disableButtonTwo, setDisableButtonTwo] = useState(false)
     const [disableApprovedBtn, setDisableApprovedBtn] = useState(false)
     const [approveSpinner, setApproveSpinner] = useState(false)
+    const [swapSpinner, setSwapSpinner] = useState(false)
 
 
     //sets the active field of the swap section, so that the useEffect triggered by changes in the other field
@@ -68,6 +77,13 @@ const Swap = (props) => {
         }
 
     },[fieldOne, balance, active, approvedAmount])
+
+    //use effect to hide the approve button when the account isn't active
+    useEffect(() => {
+        if (!active) {
+            setShowApprovedBtn(false)
+        }
+    },[active])
 
     //check if fieldOne value is higher than balance:
     const checkIfBalanceIsSufficient = () => {
@@ -297,12 +313,20 @@ const Swap = (props) => {
         }
 
     //enabling or disabling ALL FIELDS for swapping:
-    const disableEnableFieldsForSwap = (disable = false) => {
+    const disableFieldsForSwap = (disable = false) => {
+        //local fields:
         setDisableFieldOne(disable)
         setDisableFieldTwo(disable)
         setDisableButtonOne(disable)
         setDisableButtonTwo(disable)
         setSwapEnabled(!disable)
+
+        //loading modal:
+        setSwapSpinner(disable)
+        dispatch(
+            setDisableCheckbox(disable)
+        )
+
         if (checkedBool) {
             dispatch(
                 setDisableNameAndMessageFields(disable)
@@ -421,23 +445,28 @@ const Swap = (props) => {
 
             try {
                 if (!checkedBool) {
-                    disableEnableFieldsForSwap(true)
+                    disableFieldsForSwap(true)
                     const txResult = await contract.tokenToEthSwap(tokensSoldBN, minAmountMatic)
                     await txResult.wait()
+                    handleCompletedTransactionHash(txResult.hash)
+                    handleSwapCompletedModal(true)
                     clearValues()
                 }
                 //checking if the message is not empty
                 else if (checkMessageLength()) {
-                    disableEnableFieldsForSwap(true)
+                    disableFieldsForSwap(true)
                     const txResult = await contract.tokenToEthSwapSacredOne(tokensSoldBN, minAmountMatic, name, message)
                     await txResult.wait()
-                    await sendMessage(tokenOne.value.symbol)
+                    handleCompletedTransactionHash(txResult.hash)
+                    const messageRes = await sendMessage(tokenOne.value.symbol)
+                    handleTwitterMsg(messageRes.id_str)
+                    handleSwapCompletedModal(true)
                     clearValues()
                 }
             } catch (error) {
                 console.log(error)
             }
-            disableEnableFieldsForSwap(false)
+            disableFieldsForSwap(false)
             console.log("done publishing on the chain")
 
         }
@@ -452,28 +481,51 @@ const Swap = (props) => {
 
             try {
                 if (!checkedBool) {
-                    disableEnableFieldsForSwap(true)
+                    disableFieldsForSwap(true)
                     const txResult = await contract.ethToTokenSwap(minAmountToken, {value: maticSoldBN})
                     await txResult.wait()
+                    handleCompletedTransactionHash(txResult.hash)
+                    handleSwapCompletedModal(true)
                     clearValues()
                 }
 
                 //checking if the message is not empty
                 else if (checkMessageLength()){
-                    disableEnableFieldsForSwap(true)
+                    disableFieldsForSwap(true)
                     const txResult = await contract.ethToTokenSwapSacredOne(minAmountToken, name, message, {value: maticSoldBN})
                     await txResult.wait()
-                    await sendMessage(tokenTwo.value.symbol)
+                    handleCompletedTransactionHash(txResult.hash)
+                    handleSwapCompletedModal(true)
+                    const messageRes = await sendMessage(tokenTwo.value.symbol)
+                    handleTwitterMsg(messageRes.id_str)
                     clearValues()
                 }
             }
             catch (error) {
                 console.log(error)
             }
-            disableEnableFieldsForSwap(false)
+            disableFieldsForSwap(false)
             console.log("done publishing on the chain")
         }
 
+    }
+
+    const handleTwitterMsg = (id) => {
+        dispatch(
+            setTwitterMsgId(id)
+        )
+    }
+
+    const handleCompletedTransactionHash = (hash) => {
+        dispatch(
+            setCompletedTransactionHash(hash)
+        )
+    }
+
+    const handleSwapCompletedModal = () => {
+        dispatch(
+            setSwapCompletedModalState(true)
+        )
     }
 
 
@@ -512,8 +564,14 @@ const Swap = (props) => {
                 </InputWrapper>
             </SwapColumnTwo>
 
+
             <ButtonOption disabled={!swapEnabled}
-                          onClick={() => swapOrConnectBtn()}> {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
+                          onClick={() => swapOrConnectBtn()}>
+                {swapSpinner &&
+                <SwapSpinnerWrapper>
+                    <DualRing size={20} color={"rgba(70,128,208,0.41)"}/>
+                </SwapSpinnerWrapper>}
+                {active ? 'Swap' : 'Connect Wallet'}</ButtonOption>
             {
                 showAccountWarning &&
                 <NotificationWrapper>
@@ -531,7 +589,7 @@ const Swap = (props) => {
             {messageWarning &&
                 <NotificationWrapper>
                     <Exclamation/>
-                    <p>{"You need to fill in the message."}</p>
+                    <p>{"Please fill or uncheck the message below."}</p>
                 </NotificationWrapper>
             }
 
@@ -709,9 +767,18 @@ margin-bottom: 10px;
 
 const SwapTwoButtonWrapper = styled(SwapOneButtonWrapper)``
 
+const SwapSpinnerWrapper = styled.div`
+    position: absolute;
+    top:8px;
+    left:35%;
+  @media (max-width: 495px) {
+    left: 30%;
+  }
+`
 
 
 const ButtonOption = styled.button`
+  position: relative;
   width: 96%;
   display: flex;
   align-items: center;

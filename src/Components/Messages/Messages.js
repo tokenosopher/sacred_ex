@@ -19,6 +19,7 @@ const Guidelines = (props) => {
     const calculateMessageWarning = useSelector(state => state.messages.calculateMessageWarning);
     const disableNameField = useSelector(state => state.messages.disableNameField);
     const disableMessageField = useSelector(state => state.messages.disableMessageField);
+    const disableCheckbox = useSelector(state => state.messages.disableCheckbox);
 
     const handleMessageWarning = (bool) => {
         dispatch(setMessageWarning(bool));
@@ -37,9 +38,11 @@ const Guidelines = (props) => {
     };
 
     const handleCheckedChange = (value) => {
-        dispatch(
-            setChecked(value)
-        )
+        if (!disableCheckbox) {
+            dispatch(
+                setChecked(value)
+            )
+        }
     };
 
     useEffect(() => {
@@ -64,7 +67,7 @@ const Guidelines = (props) => {
     return (
         <Container checked={globalChecked}>
             <TitleWrapper>
-                <CheckboxWrapper>
+                <CheckboxWrapper $disabled={disableCheckbox}>
                     {
                         globalChecked ?
                             <BiCheckboxChecked size={30} onClick={() => handleCheckedChange(false)}/>
@@ -77,7 +80,7 @@ const Guidelines = (props) => {
                     <QuestionCircleMsgs size={20}/>
                     <QuestionHoverBoxMsgs>
                         <p>Coin Messages are a unique feature of sacred coins. These messages get stored on the blockchain in the coin events, and are also saved on social media (i.e. Twitter for now)</p>
-                        <p>Hint: Enter your twitter handle in place of the name, and when you buy the coin, you will be tagged in the message on Twitter.</p>
+                        <p>Hint: Enter your twitter handle in place of the name, and when you buy the coin, you will be tagged in the Tweet.</p>
 
                     </QuestionHoverBoxMsgs>
                 </QuestionMarkWrapper>
@@ -141,8 +144,10 @@ const TitleWrapper = styled.div`
 
 const CheckboxWrapper = styled.div`
   margin: 10px;
-  display:flex;
+  display: flex;
   position: relative;
+  cursor: pointer;
+  color: ${props => props.$disabled ? "rgba(255, 255, 255, 0.5)" : "white"};
 `
 
 const QuestionHoverBoxMsgs = styled(QuestionHoverBox)`

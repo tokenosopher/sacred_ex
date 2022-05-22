@@ -12,7 +12,8 @@ const initialState = {
     //created so that the messageWarning wouldn't be displayed from the beginning - only if the user mistakenly tries to submit without filling the fields.
     calculateMessageWarning: false,
     disableNameField: false,
-    disableMessageField: false
+    disableMessageField: false,
+    disableCheckbox: false,
 }
 
 const messagesSlice = createSlice({
@@ -37,7 +38,11 @@ const messagesSlice = createSlice({
         setDisableNameAndMessageFields: (state, action) => {
             state.disableNameField = action.payload;
             state.disableMessageField = action.payload;
-        }
+        },
+        setDisableCheckbox: (state, action) => {
+            state.disableCheckbox = action.payload;
+        },
+
     }
 });
 
@@ -47,7 +52,8 @@ export const {
     setChecked,
     setMessageWarning,
     setCalculateMessageWarning,
-    setDisableNameAndMessageFields
+    setDisableNameAndMessageFields,
+    setDisableCheckbox
 } = messagesSlice.actions;
 
 export default messagesSlice.reducer;

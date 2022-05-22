@@ -10,6 +10,7 @@ import Messages from "./Components/Messages/Messages";
 import ConnectModal from "./Components/Modals/ConnectModal";
 import SelectCoinModal from "./Components/Modals/SelectCoinModal";
 import SwapSettingsModal from "./Components/Modals/SwapSettingsModal";
+import SwapCompletedModal from "./Components/Modals/swapCompletedModal";
 import {useSelector} from "react-redux";
 import {ethers} from 'ethers';
 import {useWeb3React} from "@web3-react/core";
@@ -22,6 +23,7 @@ import {etherFromWei} from "./constants/utils";
 import {Route, Routes} from "react-router-dom";
 import About from "./Components/About/About";
 import ChainIdModal from "./Components/Modals/ChainIdModal";
+
 
 
 function App() {
@@ -45,6 +47,9 @@ function App() {
     const tokenOne = useSelector((state) => state.tokenOne)
 
     const tokenTwo = useSelector((state) => state.tokenTwo)
+
+    // more retrievals:
+    const swapCompletedModalState = useSelector((state) => state.swapCompletedModalState.isOpen)
 
     //use effect that updates the active token attributes whenever the active token changes:
     //if both tokens are matic, then it switches to the default - gratitude coin
@@ -113,6 +118,7 @@ function App() {
       <SelectCoinModal functions={[coinModal, setCoinModal]}/>
       <SwapSettingsModal functions={[settingsModal, setSettingsModal]}/>
       <ChainIdModal functions={[settingsModal, setSettingsModal]}/>
+      {swapCompletedModalState && <SwapCompletedModal/>}
       <Main className="App">
         <Header functions={[setConnectModal]}/>
           <Routes>
