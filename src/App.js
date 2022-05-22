@@ -132,8 +132,7 @@ function App() {
                   <Messages functions = {[activeTokenAttributes]}/></>}/>
               <Route path={"/about"} element={<About/>}/>
           </Routes>
-
-        {/*<Footer/>*/}
+        <Footer/>
       </Main>
       </>
   );
