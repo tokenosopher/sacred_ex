@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FaGithub, FaTwitter } from 'react-icons/fa';
-import ethglobal from '../../assets/images/ethglobal.png';
+// import ethglobal from '../../assets/images/ethglobal.png';
 
 const Footer = () => {
 
@@ -12,7 +12,7 @@ const Footer = () => {
             {/*//create a link to the github repo:*/}
             <a href="https://github.com/tokenosopher/sacred_ex" target="_blank" rel="noreferrer noopener"><FaGithub/></a>
             <a href="https://twitter.com/CoinMessages" target="_blank" rel="noreferrer noopener"><FaTwitter/></a>
-            <a href="https://showcase.ethglobal.com/hackmoney2022/sacredex-16z0d" target="_blank" rel="noreferrer noopener"><EthGlobalImage src={ethglobal} alt="ethglobal logo"/></a>
+            {/*<a href="https://showcase.ethglobal.com/hackmoney2022/sacredex-16z0d" target="_blank" rel="noreferrer noopener"><EthGlobalImage src={ethglobal} alt="ethglobal logo"/></a>*/}
             </Links>
             <InfoRight>
                 <p>{/* left empty so that I didn't have to modify all the code */}</p>
