@@ -127,7 +127,7 @@ function App() {
       <Main className="App">
         <Header functions={[setConnectModal]}/>
           <Routes>
-              <Route path="/" element={<><Guidelines functions={[activeTokenAttributes]}/>
+              <Route path="/" element={<><Guidelines activeTokenAttributes={activeTokenAttributes}/>
                   <Swap functions={[setConnectModal, setCoinModal, setSettingsModal]}/>
                   <Messages functions = {[activeTokenAttributes]}/></>}/>
               <Route path={"/about"} element={<About/>}/>

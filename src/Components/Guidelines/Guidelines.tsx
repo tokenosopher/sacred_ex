@@ -1,12 +1,39 @@
 import React from 'react';
 import styled from 'styled-components';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
+import gratitude_coin from "../../assets/token_icons/gratitude_coin.png";
+import contractAddresses from "../../artifacts/src/contract_addresses/contractAddresses.json";
+import IERC20Sacred from "../../artifacts/src/contracts/IERC20Sacred.sol/IERC20Sacred.json";
 
 //all of the writing for this component is found in the tokenListSlice.js file
 
-const Guidelines = (props) => {
+interface GuidelinesProps {
+    activeTokenAttributes: {
+        id: string;
+        name: string;
+        symbol: string;
+        icon: string,
+        guidelineTitle: string;
+        guidelines: string;
+        messageTitle: string;
+        messageDescription: string;
+        messagePlaceholderOne: string;
+        messageConnector: string;
+        messagePlaceholderTwo: string;
+        address: string;
+        abi: any,
+        exchangeAddress: string;
+    }
+}
 
-    const [activeTokenAttributes]= props.functions
+
+
+
+const Guidelines = ({ activeTokenAttributes }: GuidelinesProps) => {
+
+    console.log(activeTokenAttributes)
+
+
 
     return (
         <Container>

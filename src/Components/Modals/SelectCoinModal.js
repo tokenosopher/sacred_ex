@@ -64,6 +64,11 @@ export default SelectCoinModal;
 
 export const ModalBoxCoins = styled(ModalBox)`
   width: 480px;
+  min-width: 360px;
+  
+  @media (max-width: 480px) {
+    width: 90vw;  
+  }
 `
 
 export const Line = styled.hr`
