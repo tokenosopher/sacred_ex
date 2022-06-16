@@ -58,15 +58,15 @@ const EthGlobalImage = styled.img`
   
 `
 
-const InfoMiddle = styled.div`
-    margin-left: 10vw;
-  @media (max-width: 750px) {
-    margin-right: 2vw;
-  }
-  //make space between letters larger:
-  letter-spacing: 0.05rem;
-
-`
+// const InfoMiddle = styled.div`
+//     margin-left: 10vw;
+//   @media (max-width: 750px) {
+//     margin-right: 2vw;
+//   }
+//   //make space between letters larger:
+//   letter-spacing: 0.05rem;
+//
+// `
 
 const InfoRight = styled.div`
   margin-right: calc(2vw);

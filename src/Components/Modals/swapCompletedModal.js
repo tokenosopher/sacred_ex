@@ -10,7 +10,6 @@ const SwapCompletedModal = () => {
     const dispatch = useDispatch();
 
     const checkedBool = useSelector(state => state.messages.checkedBool);
-    const twitterMsgId = useSelector(state => state.swapCompletedModalState.twitterMsgId);
     const completedTransactionHash = useSelector(state => state.swapCompletedModalState.completedTransactionHash);
 
     const handleClose = () => {

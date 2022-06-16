@@ -6,9 +6,7 @@ import {
     ModalBox,
     TitleWrapper,
     ModalTitle,
-    ButtonWrapper,
-    CloseButton,
-    AiOutlineCloseBtn
+    ButtonWrapper
 } from "./ConnectModal";
 
 
