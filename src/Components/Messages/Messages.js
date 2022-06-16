@@ -99,6 +99,7 @@ const Guidelines = (props) => {
                     />
                     <p>{activeTokenAttributes && activeTokenAttributes.messageConnector}</p>
                 </InputFirstRow>
+                <InputMessageWrapper>
                 <InputMessage
                     disabled={disableMessageField}
                     type={"textarea"}
@@ -107,6 +108,7 @@ const Guidelines = (props) => {
                     value={globalMessage}
                     onChange={handleMessageChange}
                 />
+                </InputMessageWrapper>
             </InputsWrapper>
         </Container>
     )
@@ -186,6 +188,12 @@ const InputFirstRow = styled.div`
     margin-left: 10px;
   }
 `
+
+const InputMessageWrapper = styled.div`
+    display:flex;
+    margin: 0 8px 0 0;
+  `
+
 
 
 const InputName = styled.input`
