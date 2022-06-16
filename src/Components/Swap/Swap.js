@@ -680,7 +680,7 @@ const InputWrapper = styled.div`
 `
 
 const InputFieldOne = styled.input`
-  width: 100vw;
+  width: 100%;
   height: 80px;
   border-radius: 10px;
   font-size: 30px;
